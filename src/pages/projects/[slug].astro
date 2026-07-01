@@ -1,0 +1,67 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "js-yaml";
+import Layout from "../../components/Layout.astro";
+import Tissue from "../../components/Tissue.astro";
+
+interface Project {
+  title: string; slug?: string; role?: string; theme?: string; locality?: string;
+  body?: string; image?: string; external?: boolean; href?: string;
+  links?: { label: string; url: string }[];
+}
+
+export function getStaticPaths() {
+  const file = path.join(process.cwd(), "src/data/projects.yaml");
+  const data = yaml.load(fs.readFileSync(file, "utf8")) as { projects: Project[] };
+  return data.projects
+    .filter((p) => p.slug && !p.external)
+    .map((p) => ({ params: { slug: p.slug! }, props: { project: p } }));
+}
+
+const { project } = Astro.props as { project: Project };
+const paras = (project.body ?? "").split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+---
+<Layout title={project.title} current="projects" section="Bioregional Commons" description={`${project.title} — a ReFi BCN case study.`}>
+  <article class="case">
+    <header class="case__head">
+      <div class="case__tissue-wrap"><Tissue seed={2} opacity={0.1} tone="--pillar-tissue-mid" /></div>
+      <p class="eyebrow">Case study</p>
+      <h1>{project.title}</h1>
+      <dl class="case__meta">
+        {project.role && (<><dt>Role</dt><dd>{project.role}</dd></>)}
+        {project.theme && (<><dt>Theme</dt><dd>{project.theme}</dd></>)}
+        {project.locality && (<><dt>Where</dt><dd>{project.locality}</dd></>)}
+      </dl>
+    </header>
+
+    {project.image && <img class="case__image" src={project.image} alt="" />}
+
+    <div class="case__body">
+      {paras.map((p) => <p>{p}</p>)}
+    </div>
+
+    {project.links && project.links.length > 0 && (
+      <p class="case__links">
+        {project.links.map((l) => (
+          <a class="btn btn--secondary" href={l.url} target="_blank" rel="noopener">{l.label} ↗</a>
+        ))}
+      </p>
+    )}
+
+    <p class="case__back"><a class="link" href="/projects">← All projects</a></p>
+  </article>
+</Layout>
+
+<style>
+  .case { max-width: var(--container-prose); margin: 0 auto; padding: var(--space-16) var(--gutter); }
+  .case__head { position: relative; isolation: isolate; margin-bottom: var(--space-8); }
+  .case__tissue-wrap { position: absolute; inset: -2rem -2rem auto -2rem; height: 12rem; z-index: -1; overflow: hidden; }
+  .case__meta { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-4); margin-top: var(--space-5); }
+  .case__meta dt { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); align-self: center; }
+  .case__meta dd { margin: 0; }
+  .case__image { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius); margin-bottom: var(--space-8); }
+  .case__body p { margin: 0 0 var(--space-5); line-height: var(--leading-body); max-width: var(--container-prose); }
+  .case__links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .case__back { margin-top: var(--space-10); }
+</style>

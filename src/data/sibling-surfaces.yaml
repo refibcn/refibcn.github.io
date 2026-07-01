@@ -1,0 +1,21 @@
+siblings:
+  - label: Atlas (maps)
+    url: /atlas/
+  - label: Commons (knowledge)
+    url: /commons/
+  - label: Bioregional Garden
+    url: https://bioregioning.earth
+  - label: Regenerant Catalunya
+    url: https://regenerant-catalunya.refibcn.cat
+federation:
+  - label: ReFi DAO
+    url: https://refidao.com/
+  - label: Regen Coordination
+    url: https://hub.regencoordination.xyz/
+contact:
+  - label: hello@refibcn.cat
+    url: mailto:hello@refibcn.cat
+  - label: Telegram
+    url: https://t.me/+j4zOWZGsITwxNmY8
+  - label: GitHub
+    url: https://github.com/refibcn

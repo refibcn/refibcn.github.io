@@ -1,0 +1,107 @@
+# Project case studies. Internal entries (external: false) get a /projects/<slug>
+# case-study page via src/pages/projects/[slug].astro. External entries link out.
+# Copy is grounded in real org work. FLAGs below (YAML comments, never rendered)
+# mark specifics to confirm before publishing — see WEBSITE-BUILD-v1-spec §11.
+projects:
+  - title: Regenerant Catalunya
+    slug: regenerant-catalunya
+    role: Program design · funding coordination · facilitation
+    theme: Regenerative funding network
+    locality: Catalonia
+    image: /assets/regenerant-catalunya-cover.png
+    external: false
+    links:
+      - label: Visit the program site
+        url: https://regenerant-catalunya.refibcn.cat
+    # FLAG: confirm exact pooled total + project count + match source before publishing.
+    body: |
+      Regenerant Catalunya is our flagship program: a local funding round that
+      pools capital from Catalan cooperatives and matches it with global
+      regenerative-finance sources, then routes the majority directly to projects
+      on the ground.
+
+      We designed the round, facilitated the participating networks — Miceli
+      Social and the La Fundició / Keras Buti cluster — and ran the treasury
+      through a Safe multisig that our partners co-operate, so decisions and
+      flows stay legible to everyone involved. The round drew on Gitcoin Grants
+      tooling for the global match.
+
+      The result was capital pooled across local cooperatives and global match
+      funding, with the large majority directed to a cohort of local
+      regenerative projects rather than to overhead. It is the clearest proof of
+      the model we offer: cooperative governance first, on-chain transparency in
+      service of it.
+
+  - title: Bioregional Weaving Labs — portfolio mapping
+    slug: bwl-portfolio-mapping
+    role: Knowledge-base structuring · portfolio visualization
+    theme: Digital systems for a partner network
+    locality: Cross-bioregional
+    external: false
+    # FLAG: no public URL for this engagement — add link_url or keep internal-only.
+    body: |
+      Bioregional Weaving Labs coordinates a network of place-based regenerative
+      partners across Europe. We worked on making that portfolio legible:
+      structuring the underlying database and turning a scattered set of records
+      into a navigable picture of who is doing what, where.
+
+      This is the knowledge-management and digital-systems line of our work —
+      the deliverable is an editable, living database the team owns, not a static
+      report that goes stale. It is the same capability we bring to any
+      organization sitting on knowledge it cannot yet see clearly.
+
+  - title: ReFi DAO / Regen Coordination
+    slug: refi-dao-regen-coordination
+    role: Local node · governance design · funding-round coordination
+    theme: Network coordination
+    locality: Global federation
+    image: /assets/ecosystem_map.png
+    external: false
+    links:
+      - label: ReFi DAO
+        url: https://refidao.com/
+      - label: Regen Coordination
+        url: https://hub.regencoordination.xyz/
+    body: |
+      ReFi BCN is a local node within the wider ReFi DAO and Regen Coordination
+      network. We contribute governance design, funding-round mechanics, and the
+      day-to-day coordination that keeps a distributed regenerative ecosystem
+      moving.
+
+      In practice this means bridging two worlds: the cooperative and Economia
+      Social i Solidària traditions we are rooted in locally, and the global
+      regenerative-finance infrastructure — Safe, Karma GAP, Gitcoin, Celo Public
+      Goods — that the network runs on. We name those tools specifically and use
+      them where they add value, without letting the tooling drive the work.
+
+  - title: Bioregional Garden
+    slug: bioregional-garden
+    role: Knowledge-base structuring · commons stewardship
+    theme: Bioregional knowledge commons
+    locality: Catalonia
+    external: false
+    links:
+      - label: Visit the garden
+        url: https://bioregioning.earth
+    body: |
+      The Bioregional Garden is a stewarded knowledge surface for Catalonia's
+      regenerative ecosystem — a place where the territory's actors, practices,
+      and resources are gathered into a shared, reusable commons rather than
+      scattered across private drives and chat threads.
+
+      Andrea leads the stewardship; we provide the structuring underneath: a
+      knowledge base that stays maintainable, links cleanly to sibling surfaces,
+      and grows without collapsing into clutter. It is a working example of the
+      knowledge-commons line we offer other organizations.
+
+  - title: Altiplano Estepario
+    slug: altiplano-estepario
+    role: Knowledge base · bioregional learning network
+    theme: Place-based knowledge
+    locality: Iberian high steppes
+    external: true
+    href: https://andrea-diome.github.io/altiplano-estepario
+    body: |
+      A stewarded knowledge base and bioregional learning network for the
+      Iberian high steppes — Andrea's place-based practice, and a reference for
+      how we structure territorial knowledge so a community can use it.

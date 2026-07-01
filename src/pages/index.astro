@@ -1,0 +1,193 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "js-yaml";
+import Layout from "../components/Layout.astro";
+import Tissue from "../components/Tissue.astro";
+import FlowDivider from "../components/FlowDivider.astro";
+import PillarBadge from "../components/PillarBadge.astro";
+
+const d = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/landing.yaml"), "utf8")) as any;
+---
+<Layout title="Home" current="home">
+  <!-- Hero -->
+  <section class="hero">
+    <Tissue seed={3} opacity={0.07} tone="--pillar-tissue-mid" />
+    <div class="hero__inner">
+      <p class="eyebrow">ReFi BCN · Catalunya</p>
+      <h1 class="display hero__title">{d.hero.title}</h1>
+      <div class="hero__badges">
+        <PillarBadge pillar="tissue" /><PillarBadge pillar="neural" /><PillarBadge pillar="flow" />
+      </div>
+      <p class="lede hero__tagline">{d.hero.tagline}</p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#contact">Contact us</a>
+        <a class="btn btn--ghost" href="#what-we-do">What we do</a>
+      </div>
+    </div>
+  </section>
+
+  <FlowDivider />
+
+  <!-- Our approach -->
+  <section class="block" id="approach">
+    <div class="block__inner narrow">
+      <p class="eyebrow">Our approach</p>
+      <h2>We work in the gap between ambition and infrastructure.</h2>
+      <p class="lede">{d.approach}</p>
+    </div>
+  </section>
+
+  <!-- What we do — the three capabilities -->
+  <section class="block block--alt" id="what-we-do">
+    <div class="block__inner">
+      <p class="eyebrow">What we do</p>
+      <h2>Three capabilities, one substrate.</h2>
+      <p class="lede block__intro">{d.whatWeDoIntro}</p>
+      <div class="pillars">
+        {d.pillars.map((p: any) => (
+          <article class={`pillar-row pillar-row--${p.key}`}>
+            <div class="pillar-row__head">
+              <PillarBadge pillar={p.key} label={p.badge} />
+              <h3 class="pillar-row__title">{p.title}</h3>
+              <p class="pillar-row__intro">{p.intro}</p>
+            </div>
+            <ul class="pillar-row__services">
+              {p.services.map((s: any) => (
+                <li><strong>{s.name}</strong><span>{s.body}</span></li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+      <div class="cta-panel">
+        <div>
+          <h3>{d.whatWeDoCta.title}</h3>
+          <p>{d.whatWeDoCta.body}</p>
+        </div>
+        <a class="btn btn--primary" href="#contact">Contact us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="block" id="projects">
+    <div class="block__inner">
+      <p class="eyebrow">Projects</p>
+      <h2>Work at the connective layer.</h2>
+      <p class="lede block__intro">{d.projectsIntro}</p>
+      <div class="projects">
+        {d.projects.map((pr: any) => (
+          <article class="project">
+            <div class="project__badges">{pr.pillars.map((k: string) => <PillarBadge pillar={k} />)}</div>
+            <h3 class="project__heading">{pr.heading}</h3>
+            <p class="project__name">{pr.name}</p>
+            <p class="project__excerpt">{pr.excerpt}</p>
+            <a class="project__link" href={pr.href} target={pr.external ? "_blank" : undefined} rel={pr.external ? "noopener" : undefined}>
+              {pr.external ? "Visit site ↗" : "Read case study →"}
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Who we work with -->
+  <section class="block block--alt" id="who-we-work-with">
+    <div class="block__inner">
+      <p class="eyebrow">Who we work with</p>
+      <h2>Organizations that treat ecology and social fabric as one problem.</h2>
+      <p class="lede block__intro">{d.whoWeWorkWithIntro}</p>
+      <div class="audiences">
+        {d.audiences.map((a: any) => (
+          <article class="audience"><h3>{a.name}</h3><p>{a.body}</p></article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Who we are -->
+  <section class="block" id="who-we-are">
+    <div class="block__inner">
+      <p class="eyebrow">Who we are</p>
+      <h2>Three operators at Bloc4, Barcelona.</h2>
+      <p class="lede block__intro">{d.teamIntro}</p>
+      <div class="team">
+        {d.team.map((m: any) => (
+          <article class="member">
+            <h3 class="member__name">{m.name}</h3>
+            <p class="member__role eyebrow">{m.role}</p>
+            <p class="member__bio">{m.bio}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="block block--alt" id="contact">
+    <div class="block__inner narrow">
+      <p class="eyebrow">Contact</p>
+      <h2>{d.contact.title}</h2>
+      <p class="lede">{d.contact.body}</p>
+      <p class="contact__email">Write to <a class="link" href={`mailto:${d.contact.email}`}>{d.contact.email}</a></p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href={`mailto:${d.contact.email}`}>Email us</a>
+        <a class="btn btn--ghost" href="/contact/">All contact options</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero { position: relative; isolation: isolate; overflow: hidden; }
+  .hero__inner { position: relative; z-index: 1; max-width: var(--container-default); margin: 0 auto; padding: var(--space-20) var(--gutter) var(--space-12); }
+  .hero__title { font-size: clamp(2.4rem, 5.5vw, 4.2rem); max-width: 18ch; margin: var(--space-3) 0 var(--space-6); }
+  .hero__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-6); }
+  .hero__tagline { max-width: 58ch; }
+  .hero__cta { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-8); }
+
+  .block { padding: var(--space-16) var(--gutter); }
+  .block--alt { background: var(--surface-1); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+  .block__inner { max-width: var(--container-default); margin: 0 auto; }
+  .block__inner.narrow { max-width: 65ch; }
+  .block h2 { font-size: clamp(1.8rem, 3.2vw, 2.6rem); max-width: 22ch; margin: var(--space-2) 0 var(--space-4); }
+  .block__intro { margin-bottom: var(--space-10); max-width: 62ch; }
+
+  /* Pillar rows */
+  .pillars { display: flex; flex-direction: column; gap: var(--space-12); }
+  .pillar-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--ink); }
+  .pillar-row__title { font-size: var(--text-xl); margin: var(--space-3) 0 var(--space-3); }
+  .pillar-row__intro { color: var(--text-muted); line-height: var(--leading-body); }
+  .pillar-row__services { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-5); }
+  .pillar-row__services li { display: flex; flex-direction: column; gap: var(--space-1); }
+  .pillar-row__services strong { font-family: var(--mono); font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.04em; }
+  .pillar-row__services span { color: var(--text-muted); line-height: var(--leading-body); font-size: var(--text-sm); }
+
+  .cta-panel { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); flex-wrap: wrap; margin-top: var(--space-12); padding: var(--space-8); border: 1px solid var(--ink); }
+  .cta-panel h3 { margin: 0 0 var(--space-2); }
+  .cta-panel p { margin: 0; color: var(--text-muted); max-width: 60ch; }
+
+  /* Projects */
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: var(--space-5); }
+  .project { background: var(--bg); border: 1px solid var(--ink); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+  .project__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .project__heading { font-size: var(--text-lg); margin: 0; }
+  .project__name { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0; }
+  .project__excerpt { color: var(--text-muted); line-height: var(--leading-body); font-size: var(--text-sm); flex: 1; }
+  .project__link { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary); text-decoration: none; margin-top: auto; }
+  .project__link:hover { text-decoration: underline; }
+
+  /* Audiences + team */
+  .audiences, .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: var(--space-8); }
+  .audience h3, .member__name { font-size: var(--text-lg); margin: 0 0 var(--space-2); }
+  .audience p, .member__bio { color: var(--text-muted); line-height: var(--leading-body); }
+  .member__role { display: block; margin-bottom: var(--space-2); }
+
+  .contact__email { margin-top: var(--space-4); }
+
+  @media (max-width: 720px) {
+    .pillar-row { grid-template-columns: 1fr; gap: var(--space-5); }
+    .cta-panel { flex-direction: column; align-items: flex-start; }
+  }
+</style>

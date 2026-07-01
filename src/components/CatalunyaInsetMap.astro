@@ -1,0 +1,212 @@
+---
+// src/components/CatalunyaInsetMap.astro
+// Renders Catalunya as an SVG with markers, plus a sub-zoom callout for L'Hospitalet metro
+// (where 4 of 11 RC cohort markers cluster).
+import type { Project } from "../content.config";
+
+interface Props {
+  projects: Project[];
+}
+const { projects } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+const geoUrl = `${baseUrl}/geo/catalunya-comarques.geojson`;
+// Pass project data + network attribution to the client island via a JSON script tag.
+const payload = projects.map((p) => ({
+  id: p.id,
+  lat: p.geo.lat,
+  lng: p.geo.lng,
+  name: p.name,
+  network: p.network,
+  locality: p.locality,
+}));
+---
+
+<div class="inset-map" data-inset-map data-geo-url={geoUrl}>
+  <svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet" aria-label="Catalunya — RC cohort marker map">
+    <g class="comarques"></g>
+    <g class="markers"></g>
+    <g class="subzoom" transform="translate(1140 720)">
+      <rect class="subzoom-frame" x="0" y="0" width="240" height="160"/>
+      <text class="subzoom-label" x="8" y="16">L'Hospitalet · Baix Llobregat</text>
+      <g class="subzoom-comarques"></g>
+      <g class="subzoom-markers"></g>
+    </g>
+  </svg>
+  <script type="application/json" data-payload set:html={JSON.stringify(payload)}></script>
+</div>
+
+<script>
+import * as d3 from "d3";
+import {
+  CATALUNYA_DEFAULT,
+  LHOSPITALET_SUBZOOM,
+  makeProjection,
+  placeMarkers,
+} from "../lib/catalunya-projection";
+
+interface Marker {
+  id: string;
+  lat: number;
+  lng: number;
+  name: string;
+  network: "miceli" | "keras-buti";
+  locality: string;
+}
+
+const ACCENT_FILL: Record<string, string> = {
+  miceli: "#8B5A3C",
+  "keras-buti": "#6B4EA3",
+};
+
+document.querySelectorAll<HTMLDivElement>("[data-inset-map]").forEach(async (host) => {
+  const payloadEl = host.querySelector<HTMLScriptElement>('[data-payload]');
+  if (!payloadEl) return;
+  const markers: Marker[] = JSON.parse(payloadEl.textContent ?? "[]");
+
+  const geoUrl = host.dataset.geoUrl ?? "/geo/catalunya-comarques.geojson";
+  const geoResp = await fetch(geoUrl);
+  const geo = await geoResp.json();
+
+  const svg = d3.select(host).select("svg");
+  const projection = makeProjection(CATALUNYA_DEFAULT);
+  const path = d3.geoPath(projection);
+
+  // Main map comarques
+  svg.select<SVGGElement>("g.comarques")
+    .selectAll("path")
+    .data(geo.features)
+    .join("path")
+    .attr("d", (d) => path(d as any) ?? "")
+    .attr("class", "comarca");
+
+  // Main map markers — exclude L'Hospitalet metro markers (those sit only in the sub-zoom)
+  const isLHospitalet = (m: Marker) =>
+    m.locality.toLowerCase().includes("l'hospitalet");
+  const placedMain = placeMarkers(
+    markers.filter((m) => !isLHospitalet(m)),
+    projection,
+  );
+  // Add a single representative L'Hospitalet marker on the main map (so the cluster shows up).
+  const lhospitaletMarkers = markers.filter(isLHospitalet);
+  if (lhospitaletMarkers.length > 0) {
+    const avg = {
+      id: "lh-cluster",
+      lat: d3.mean(lhospitaletMarkers, (m) => m.lat) ?? 41.36,
+      lng: d3.mean(lhospitaletMarkers, (m) => m.lng) ?? 2.10,
+      name: `L'Hospitalet metro · ${lhospitaletMarkers.length} projects`,
+      network: "keras-buti" as const,
+      locality: "L'Hospitalet · Baix Llobregat",
+    };
+    placedMain.push({ ...placeMarkers([avg], projection)[0], ...avg });
+  }
+  drawMarkers(svg.select<SVGGElement>("g.markers"), placedMain, 8);
+
+  // Sub-zoom: only L'Hospitalet metro markers, in the callout
+  const subProjection = makeProjection(LHOSPITALET_SUBZOOM);
+  const subPath = d3.geoPath(subProjection);
+  // Filter comarques near L'Hospitalet for the sub-zoom (Barcelonès + Baix Llobregat)
+  const subFeatures = (geo.features as any[]).filter((f) => {
+    const name = (f.properties?.NOMCOMAR || f.properties?.name || "").toLowerCase();
+    return name.includes("barcelonès") || name.includes("baix llobregat");
+  });
+  svg.select<SVGGElement>("g.subzoom-comarques")
+    .selectAll("path")
+    .data(subFeatures)
+    .join("path")
+    .attr("d", (d) => subPath(d as any) ?? "")
+    .attr("class", "subzoom-comarca");
+
+  const placedSub = placeMarkers(lhospitaletMarkers, subProjection);
+  drawMarkers(svg.select<SVGGElement>("g.subzoom-markers"), placedSub, 5);
+
+  function drawMarkers(g: d3.Selection<SVGGElement, unknown, null, undefined>, items: any[], radius: number) {
+    g.selectAll("g.marker")
+      .data(items, (d: any) => d.id)
+      .join((enter) => {
+        const node = enter.append("g")
+          .attr("class", "marker")
+          .attr("data-project-id", (d: any) => d.id)
+          .attr("data-network", (d: any) => d.network)
+          .attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+        node.append("circle")
+          .attr("r", radius)
+          .attr("fill", (d: any) => ACCENT_FILL[d.network] ?? "#1d1a16")
+          .attr("stroke", "#1d1a16")
+          .attr("stroke-width", 2);
+        node.append("title").text((d: any) => `${d.name} · ${d.locality}`);
+        return node;
+      });
+  }
+
+  // Card ↔ marker linking: hovering a card highlights its marker, hovering a marker scrolls to the card
+  const allMarkers = svg.selectAll<SVGGElement, unknown>("g.marker");
+  const allCards = document.querySelectorAll<HTMLElement>("[data-project-id]:not(g)");
+
+  allCards.forEach((card) => {
+    const id = card.getAttribute("data-project-id");
+    if (!id) return;
+    card.addEventListener("pointerenter", () => {
+      svg.selectAll<SVGGElement, unknown>(`g.marker[data-project-id="${id}"]`).classed("active", true);
+    });
+    card.addEventListener("pointerleave", () => {
+      svg.selectAll<SVGGElement, unknown>(`g.marker[data-project-id="${id}"]`).classed("active", false);
+    });
+  });
+
+  allMarkers.each(function (this: SVGGElement) {
+    const id = this.getAttribute("data-project-id");
+    if (!id || id === "lh-cluster") return;
+    const sel = d3.select(this);
+    sel.on("pointerenter", () => {
+      const card = document.querySelector<HTMLElement>(`article.card[data-project-id="${id}"]`);
+      if (card) card.classList.add("hover");
+    });
+    sel.on("pointerleave", () => {
+      const card = document.querySelector<HTMLElement>(`article.card[data-project-id="${id}"]`);
+      if (card) card.classList.remove("hover");
+    });
+    sel.on("click", () => {
+      const card = document.querySelector<HTMLElement>(`article.card[data-project-id="${id}"]`);
+      card?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    });
+  });
+});
+</script>
+
+<style>
+.inset-map {
+  width: 100%;
+  background: var(--ivory);
+  border: 1px solid var(--ink);
+}
+.inset-map svg { width: 100%; height: auto; display: block; }
+:global(.comarca),
+:global(.subzoom-comarca) {
+  fill: rgba(0, 0, 0, 0.03);
+  stroke: var(--ink);
+  stroke-width: 0.5;
+  stroke-dasharray: 1 2;
+}
+:global(.marker) {
+  cursor: pointer;
+  transition: transform var(--t-fast);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+:global(.marker:hover),
+:global(.marker.active) {
+  transform: translate(var(--mx, 0), var(--my, 0)) scale(1.25);
+}
+:global(.subzoom-frame) {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+:global(.subzoom-label) {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  fill: var(--rule);
+}
+</style>

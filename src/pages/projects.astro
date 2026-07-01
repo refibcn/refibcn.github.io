@@ -1,0 +1,26 @@
+---
+import Layout from "../components/Layout.astro";
+import SectionBlock from "../components/SectionBlock.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import yaml from "js-yaml";
+import fs from "node:fs";
+import path from "node:path";
+
+const projects = (yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/projects.yaml"), "utf8")) as any).projects;
+---
+
+<Layout title="Projects" current="projects">
+  <SectionBlock title="Projects" intro="Case studies from work we've actually done — not aspirations.">
+    <div class="grid">
+      {projects.map((p: any) => (<ProjectCard title={p.title} body={p.body} image={p.image} href={p.external ? p.href : `/projects/${p.slug}`} external={p.external} />))}
+    </div>
+  </SectionBlock>
+</Layout>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+</style>

@@ -1,0 +1,36 @@
+# Audience segments for /who-we-serve. Plain, grounded, ESS↔Web3 voice (SOUL.md).
+intro: |
+  We work with organizations that are already doing regenerative or cooperative
+  work and need the systems, funding pathways, or facilitation to do more of it.
+  Primarily across Catalonia — where the Economia Social i Solidària tradition
+  runs deep — and secondarily with Italian and Brazilian organizations we share
+  language and culture with.
+audiences:
+  - name: Cooperatives & ESS organizations
+    body: |
+      Cooperatives, associations, and social-economy enterprises sitting on
+      knowledge, processes, and relationships they can't yet see clearly. We
+      structure that into living systems, automate the repetitive parts, and —
+      where it helps — open transparent funding pathways through tools like Safe
+      and Gitcoin. Cooperative governance stays in charge; the tooling serves it.
+  - name: Regenerative networks & programs
+    body: |
+      Place-based networks running programs across many partners and territories.
+      We design and facilitate the program, map the portfolio into something
+      navigable, and coordinate multi-stakeholder funding rounds — as we did for
+      Regenerant Catalunya.
+  - name: Community land trusts, time banks & commons projects
+    body: |
+      Commons-oriented projects that need their shared resources made legible and
+      durable. We build knowledge commons that stay maintainable and grow without
+      collapsing into clutter, so a community can actually use what it holds.
+  - name: Funders & ReFi infrastructure
+    body: |
+      Funders and global regenerative-finance infrastructure looking for a
+      grounded local node in Catalonia. We bridge between on-the-ground
+      cooperatives and the wider ReFi ecosystem — naming specific tools (Safe,
+      Karma GAP, Celo Public Goods) and using them where they add real value.
+secondary: |
+  Beyond Catalonia, we work with Italian and Brazilian regenerative organizations
+  — a language and culture proximity that lets us bridge contexts other providers
+  can't reach as easily.

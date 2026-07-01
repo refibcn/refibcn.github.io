@@ -1,0 +1,187 @@
+# Landing-page content — structure + copy from Andrea's prepared landing (origin/andrea).
+# The three pillars frame the org's three capabilities:
+#   tissue → Network coordination · neural → Collective intelligence · flow → Regenerative finance
+hero:
+  title: Infrastructure for territorial regeneration
+  tagline: >-
+    Regeneration that doesn't reach the economic and social roots doesn't last. We build the
+    coordination, shared knowledge, and financial architecture that let networks of initiatives
+    act coherently across their territory.
+
+approach: >-
+  There's a gap at the heart of most regenerative work: between the ambition and the
+  infrastructure needed to realize it. Projects that should reinforce each other operate in
+  isolation. Ecological and social goals run on separate tracks. Financial systems designed for
+  a different era can't sustain transitions that take decades. We work in that gap — the
+  connective tissue between initiatives, the conditions beneath the visible work.
+
+whatWeDoIntro: >-
+  We work at the substrate level — building the coordination, shared knowledge, and financial
+  architecture that allow networks of initiatives to act coherently across their territory.
+
+pillars:
+  - key: tissue
+    badge: Network coordination
+    title: Build the trust and rhythms that let networks move together
+    intro: >-
+      Regenerative transitions are, above all, coordination problems. We build the relational
+      and organizational infrastructure that makes sustained collaboration possible.
+    services:
+      - name: Program facilitation & network accompaniment
+        body: >-
+          We facilitate multi-stakeholder processes, governance design, and network convenings —
+          the shared rhythms that keep decisions moving, newcomers oriented, and friction from
+          turning into fracture when too many relationships sit on one group.
+      - name: Process alignment & automation
+        body: >-
+          We map and align workflows across a network — funding pipelines, application tracking,
+          governance handoffs — and automate only where it actually cuts coordination tax instead
+          of adding another layer.
+  - key: neural
+    badge: Collective intelligence
+    title: Make the territory legible so actors can see the whole
+    intro: >-
+      Networks can't align around what they can't see. Through research, mapping, and
+      visualization we build the shared understanding that lets actors recognize themselves as
+      part of something larger.
+    services:
+      - name: Complex research & visualizations
+        body: >-
+          Place-based research, social systems mapping, and visualization that make a territory
+          legible — living outputs partners can revise together, not a report that goes stale the
+          moment it's delivered.
+      - name: Collective knowledge infrastructure
+        body: >-
+          Linked knowledge bases, dashboards, and repositories the whole network can build on —
+          designed for collective editing and complex decisions, not one drive or one person's
+          memory.
+  - key: flow
+    badge: Regenerative finance
+    title: Finance transitions at the pace and scale regeneration needs
+    intro: >-
+      The financial systems that exist weren't built to sustain territorial regeneration. We
+      design and operate alternatives that reward systemic outcomes, not isolated outputs.
+    services:
+      - name: Grant programs & collaborative funding
+        body: >-
+          We design and run grant rounds and collaborative treasuries — from local pools to
+          multi-sig funds — so more capital reaches more projects, with governance anyone in the
+          network can verify.
+      - name: Landscape-scale finance strategy
+        body: >-
+          Portfolio development, fundraising support, and experiments in network-level financial
+          infrastructure — for when you're ready to move beyond one-off grants toward capital
+          that can follow regeneration over time.
+
+whatWeDoCta:
+  title: Working across a territory or network?
+  body: >-
+    We help initiatives move from isolated projects to shared infrastructure — coordination,
+    sensemaking, and finance designed for the scale of regeneration.
+
+projectsIntro: >-
+  Work we've done at the connective layer — funding programs, network coordination, and
+  territorial sensemaking across Catalonia and beyond.
+
+projects:
+  - heading: Territorial grantmaking locals can trust — and verify
+    name: Regenerant Catalunya
+    pillars: [tissue, flow]
+    excerpt: >-
+      A territorial funding program we designed and operated for Gitcoin Grants Round 24 —
+      pooling capital from Catalan donors and global matchers, then distributing it to local
+      regenerative projects through a cooperative multi-sig treasury.
+    href: /projects/regenerant-catalunya/
+  - heading: Keeping global federations aligned when the round ends
+    name: ReFi DAO / Regen Coordination
+    pillars: [tissue]
+    excerpt: >-
+      As a local node in the ReFi DAO federation, we contribute operational design and
+      coordination — funding-round architecture, evaluation frameworks, and governance patterns
+      that let distributed contributors move together without centralizing power.
+    href: /projects/refi-dao-regen-coordination/
+  - heading: A portfolio view the whole network can orient around
+    name: Bioregional Weaving Labs
+    pillars: [neural, tissue]
+    excerpt: >-
+      We structured BWL's portfolio of place-based labs — relationships, programs, geographies,
+      funding status — then built portfolio views and maps that let stewards compare initiatives
+      without collapsing local context.
+    href: /projects/bwl-portfolio-mapping/
+  - heading: Making a bioregion legible for collective decisions
+    name: Bioregional Intelligence
+    pillars: [neural]
+    excerpt: >-
+      Our research and visualization surface for territorial sensemaking — interactive maps and
+      dashboards that show how initiatives, institutions, and landscapes relate across a
+      bioregion. Built for complex, collective decision-making.
+    href: /atlas/
+  - heading: Stewarded knowledge for a high-steppe landscape
+    name: Altiplano Estepario
+    pillars: [neural, tissue]
+    excerpt: >-
+      A stewarded knowledge commons for one of Europe's largest semi-arid landscapes —
+      documenting regeneration practice, local actors, and water stewardship across the Iberian
+      southeast.
+    href: https://andrea-diome.github.io/altiplano-estepario
+    external: true
+
+whoWeWorkWithIntro: >-
+  Organizations, networks, and institutions that see ecological and social health as inseparable —
+  and understand that their work needs to operate systemically to affect real change.
+
+audiences:
+  - name: Cooperatives & solidarity economies
+    body: >-
+      You build through cooperative and solidarity structures — and need connective infrastructure
+      that fits democratic ownership, not tools designed for extractive scale.
+  - name: Bioeconomy & regenerative agriculture
+    body: >-
+      Your work crosses landscapes and supply chains, and you need coordination that links rural
+      stewards and urban food actors without flattening either context.
+  - name: Nature restoration initiatives
+    body: >-
+      Your restoration only holds when the communities on the land shape governance and
+      livelihoods — we work with initiatives that treat ecology and social fabric as one problem.
+  - name: Local & regional governments
+    body: >-
+      You steward public institutions watching a regenerative transition take shape — and want to
+      align programs and partners around it without smothering what's already emerging.
+  - name: Institutions at territory scale
+    body: >-
+      You work at watershed or bioregional scale, where place, social fabric, and ecological
+      health have to be designed together — not handed off to separate silos.
+  - name: Global networks & researchers
+    body: >-
+      You're part of a federation or research community testing regenerative finance and
+      governance — and need a local node that bridges cooperative practice on the ground with
+      network-scale infrastructure.
+
+teamIntro: >-
+  Three operators building the cooperative at Bloc4, Barcelona — working across coordination,
+  sensemaking, and regenerative finance.
+
+team:
+  - name: Andrea Farias
+    role: Program design & communications
+    bio: >-
+      Research, mapping, program design, and brand — from territorial sensemaking to the
+      communications that hold networks together.
+  - name: Giulio Quarta
+    role: Operations, partnerships & community
+    bio: >-
+      Partnership development, community coordination, and the operational backbone that keeps
+      programs and networks running.
+  - name: Luiz Fernando Gomez Segala
+    role: Strategy & regenerative finance
+    bio: >-
+      Ecosystem coordination, funding operations, knowledge systems, and federation alignment —
+      bridging ESS practice and regenerative finance tooling.
+# FLAG: add real LinkedIn URLs per team member when available.
+
+contact:
+  title: Contact us
+  body: >-
+    Tell us about your network, territory, or program — whether you're exploring coordination,
+    collective intelligence, or regenerative finance. We'll get back to you within a few days.
+  email: hello@refibcn.cat

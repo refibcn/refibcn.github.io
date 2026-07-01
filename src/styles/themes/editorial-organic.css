@@ -1,0 +1,54 @@
+/* themes/editorial-organic.css — ACTIVE. BIS editorial structure
+ * (warm paper/ink, Fraunces/Inter/IBM Plex Mono, straight edges, flat)
+ * + Andrea's organic three-pillar accents + backgrounds. */
+:root {
+  /* Neutrals — BIS warm-editorial */
+  --paper: #fbf9f3; --ivory: #f6f1e8; --sand: #ece4d8;
+  --ink: #1d1a16; --rule: #6b6660;
+
+  /* Organic pillars (Andrea) — accents + motif tints */
+  --pillar-neural-1: #D9E6FF; --pillar-neural-2: #AFC9FE; --pillar-neural-3: #83ACFE;
+  --pillar-neural-4: #598FFD; --pillar-neural-5: #3A61BD; --pillar-neural-6: #2A4A9E;
+  --pillar-neural-light: var(--pillar-neural-1); --pillar-neural-mid: var(--pillar-neural-4); --pillar-neural-dark: var(--pillar-neural-6);
+  --pillar-tissue-1: #E5F5D8; --pillar-tissue-2: #C2DFA7; --pillar-tissue-3: #9FC974;
+  --pillar-tissue-4: #7CB342; --pillar-tissue-5: #477125; --pillar-tissue-6: #2D5016;
+  --pillar-tissue-light: var(--pillar-tissue-1); --pillar-tissue-mid: var(--pillar-tissue-4); --pillar-tissue-dark: var(--pillar-tissue-6);
+  --pillar-flow-1: #F9E2C3; --pillar-flow-2: #F6CC92; --pillar-flow-3: #F3B661;
+  --pillar-flow-4: #F0A030; --pillar-flow-5: #AC6A35; --pillar-flow-6: #8B5038;
+  --pillar-flow-light: var(--pillar-flow-1); --pillar-flow-mid: var(--pillar-flow-4); --pillar-flow-dark: var(--pillar-flow-6);
+  --lib-moss: #214033;
+
+  /* Semantic mapping */
+  --bg: var(--paper);
+  --surface-1: var(--ivory);
+  --surface-2: var(--sand);
+  --text-primary: var(--ink);
+  --text-muted: var(--rule);
+  --border-default: color-mix(in srgb, var(--ink) 45%, transparent);
+  --border-subtle: color-mix(in srgb, var(--rule) 22%, transparent);
+  --primary: var(--pillar-flow-mid);
+  --primary-hover: var(--pillar-flow-dark);
+  --primary-foreground: var(--ink);     /* dark-ink on amber — AA 7.91:1 */
+  --accent: var(--pillar-neural-mid);
+  --accent-foreground: var(--paper);
+
+  --success: var(--lib-moss);        --success-foreground: #F4F6F2;
+  --warning: var(--pillar-flow-4);   --warning-foreground: var(--ink);
+  --danger:  #B33A2A;                --danger-foreground: var(--paper);
+  --info:    var(--pillar-neural-4); --info-foreground: var(--paper);
+
+  --gradient-bridge: linear-gradient(135deg, var(--pillar-neural-mid), var(--pillar-flow-mid));
+
+  /* Type — Andrea's Averia Serif Libre for titles/display; Inter body; IBM Plex Mono labels */
+  --serif: "Averia Serif Libre", "Fraunces", Georgia, serif;
+  --sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-headings: var(--serif);
+  --font-display-weight: 400;
+
+  /* Radius / shadow — BIS straight + flat */
+  --radius: 0; --radius-sm: 0;
+  --shadow-sm: 0 1px 2px 0 color-mix(in srgb, var(--ink) 6%, transparent);
+  --shadow-md: var(--shadow-sm);
+  --shadow-lg: var(--shadow-sm);
+}

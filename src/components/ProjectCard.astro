@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  body: string;
+  image?: string;
+  href?: string;
+  external?: boolean;
+}
+const { title, body, image, href = "#", external = false } = Astro.props;
+---
+
+<article class="card">
+  {image && <img class="card__image" src={image} alt="" />}
+  <div class="card__body">
+    <h3 class="card__title">{title}</h3>
+    <p class="card__text">{body}</p>
+    <a class="card__action" class:list={external ? ["link--external"] : []} href={href} target={external ? "_blank" : undefined} rel={external ? "noopener" : undefined}>
+      {external ? "See site" : "Read case study"}
+      {!external && " →"}
+    </a>
+  </div>
+</article>

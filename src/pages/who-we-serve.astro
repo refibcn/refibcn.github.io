@@ -1,0 +1,45 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "js-yaml";
+import Layout from "../components/Layout.astro";
+import SectionBlock from "../components/SectionBlock.astro";
+
+const data = yaml.load(
+  fs.readFileSync(path.join(process.cwd(), "src/data/who-we-serve.yaml"), "utf8")
+) as { intro: string; audiences: { name: string; body: string }[]; secondary: string };
+---
+<Layout title="Who we serve" current="who-we-serve" description="The organizations and communities ReFi BCN works with across Catalonia and beyond.">
+  <SectionBlock id="who-we-serve" title="Who we serve" intro={data.intro}>
+    <div class="audiences">
+      {data.audiences.map((a) => (
+        <article class="audience">
+          <h3 class="audience__name">{a.name}</h3>
+          <p class="audience__body">{a.body}</p>
+        </article>
+      ))}
+    </div>
+    <p class="secondary">{data.secondary}</p>
+  </SectionBlock>
+</Layout>
+
+<style>
+  .audiences {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-8);
+    margin-top: var(--space-4);
+  }
+  .audience {
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-5);
+  }
+  .audience__name { margin-bottom: var(--space-2); }
+  .audience__body { color: var(--text-muted); line-height: var(--leading-body); }
+  .secondary {
+    margin-top: var(--space-12);
+    color: var(--text-muted);
+    max-width: var(--container-prose);
+    line-height: var(--leading-body);
+  }
+</style>

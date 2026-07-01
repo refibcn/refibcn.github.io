@@ -1,0 +1,40 @@
+---
+import Layout from "../components/Layout.astro";
+import SectionBlock from "../components/SectionBlock.astro";
+import yaml from "js-yaml";
+import fs from "node:fs";
+import path from "node:path";
+
+const services = (yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/services.yaml"), "utf8")) as any).services;
+---
+
+<Layout title="What we do" current="what-we-do" description="Five operational service lines bridging social-economy practice with regenerative-finance infrastructure.">
+  <SectionBlock title="What we do" intro="Five operational service lines that bridge ESS (Economia Social i Solidària) practice with regenerative-finance infrastructure. Each is something cooperatives and regenerative networks already need — surfaced with the right tools, never buzzwords.">
+    {services.map((s: any) => (
+      <article id={s.href.split('#')[1]} class="service">
+        <h3 class="service__title">{s.title}</h3>
+        <p class="service__body">{s.body}</p>
+      </article>
+    ))}
+
+    <div class="cta">
+      <p>Most engagements start with a free intro call. We listen, then send a short proposal with options and a price — no obligation.</p>
+      <a class="btn btn--primary" href="/contact">Book a free intro call</a>
+    </div>
+  </SectionBlock>
+</Layout>
+
+<style>
+  .service { margin-bottom: var(--space-10); }
+  .service__title { margin-bottom: var(--space-2); }
+  .service__body { color: var(--text-muted); max-width: 60ch; line-height: var(--leading-body); }
+  .cta {
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    max-width: 60ch;
+  }
+  .cta p { margin: 0 0 var(--space-5); }
+</style>

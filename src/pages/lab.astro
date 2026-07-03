@@ -15,7 +15,14 @@ const library = ["--lib-coral", "--lib-amber", "--lib-sky", "--lib-rose", "--lib
 
 <Layout title="Lab — internal" current="home" noindex={true} description="Internal element + branding test surface.">
   <SectionBlock title="Lab" intro="Internal element + branding test surface. Renders the ACTIVE theme (editorial-organic). Flip src/styles/theme.css to compare organic / brand-family. Palette, type, motifs, and primitives below.">
-    <p class="eyebrow" style="margin-bottom: var(--space-8);">Internal — not linked in nav, noindex</p>
+    <p class="eyebrow" style="margin-bottom: var(--space-4);">Internal — not linked in nav, noindex</p>
+
+    <div class="note" style="margin-bottom: var(--space-10);">
+      <strong>Andrea's interactive tools</strong> (carried verbatim from her branding exploration —
+      they persist tuning to localStorage):
+      <a class="link" href="/lab-tools/motifs-explore.html">Voronoi tissue editor + motif explorer</a> ·
+      <a class="link" href="/lab-tools/colors-compare.html">palette picker / comparator</a>
+    </div>
 
     <div class="note">
       <strong>Dual-theme architecture.</strong> The active direction is <code>organic</code>

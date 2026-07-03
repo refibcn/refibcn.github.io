@@ -7,20 +7,24 @@ const data = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/siblin
   federation: { label: string; url: string }[];
   contact: { label: string; url: string }[];
 };
+const site = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/site.yaml"), "utf8")) as {
+  name: string; legalNote: string; url: string;
+};
+const siteHost = new URL(site.url).host;
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <div class="cols">
     <div class="col">
-      <span class="lockup">ReFi BCN</span>
-      <p>Cooperative in formation · Bloc4, Barcelona</p>
+      <span class="lockup">{site.name}</span>
+      <p>{site.legalNote}</p>
     </div>
     <div class="col"><span class="eyebrow">Surfaces</span><ul>{data.siblings.map((s) => <li><a href={s.url}>{s.label}</a></li>)}</ul></div>
     <div class="col"><span class="eyebrow">Federation</span><ul>{data.federation.map((s) => <li><a href={s.url}>{s.label}</a></li>)}</ul></div>
     <div class="col"><span class="eyebrow">Contact</span><ul>{data.contact.map((s) => <li><a href={s.url}>{s.label}</a></li>)}</ul></div>
   </div>
   <div class="meta">
-    <span>ReFi BCN · refibcn.cat · {year}</span>
+    <span>{site.name} · {siteHost} · {year}</span>
     <span>Code · MIT</span>
     <span>Content · CC BY-SA 4.0</span>
   </div>

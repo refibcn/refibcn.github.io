@@ -79,6 +79,7 @@ const d = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/landing.y
       <div class="projects">
         {d.projects.map((pr: any) => (
           <article class="project">
+            {pr.image && <img class="project__image" src={pr.image} alt="" loading="lazy" />}
             <div class="project__badges">{pr.pillars.map((k: string) => <PillarBadge pillar={k} />)}</div>
             <h3 class="project__heading">{pr.heading}</h3>
             <p class="project__name">{pr.name}</p>
@@ -171,6 +172,7 @@ const d = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/landing.y
   /* Projects */
   .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: var(--space-5); }
   .project { background: var(--bg); border: 1px solid var(--ink); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+  .project__image { width: calc(100% + 2 * var(--space-6)); margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) 0; max-width: none; aspect-ratio: 16 / 9; object-fit: cover; border-bottom: 1px solid var(--ink); }
   .project__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; }
   .project__heading { font-size: var(--text-lg); margin: 0; }
   .project__name { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0; }

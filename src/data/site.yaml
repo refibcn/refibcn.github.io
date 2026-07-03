@@ -1,0 +1,14 @@
+# Site identity — SINGLE SOURCE for the org name + global meta.
+# The group name is OPEN (survey pending, 260630 decision) — when it lands,
+# update `name` here and the chrome (nav, footer, titles, meta) follows.
+# Prose mentions inside landing.yaml / projects.yaml still need a copy pass.
+name: ReFi BCN
+legalNote: Cooperative in formation · Bloc4, Barcelona
+url: https://refibcn.github.io
+domainNote: refibcn.cat pending DNS decision
+tagline: Infrastructure for territorial regeneration
+description: >-
+  ReFi BCN — a local ReFi node and cooperative-in-formation in Barcelona. Funding,
+  knowledge, and governance for regenerative initiatives in Catalonia.
+email: hello@refibcn.cat
+ogImage: /assets/og-image.png

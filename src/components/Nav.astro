@@ -1,4 +1,11 @@
 ---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "js-yaml";
+const site = yaml.load(
+  fs.readFileSync(path.join(process.cwd(), "src/data/site.yaml"), "utf8")
+) as { name: string };
+
 interface Props {
   current?: string;
   section?: string;
@@ -15,8 +22,8 @@ const items = [
 ];
 ---
 <header class="site-nav">
-  <a href="/" class="brand" aria-label="ReFi BCN — home">
-    <span class="brand-org">ReFi BCN</span>
+  <a href="/" class="brand" aria-label={`${site.name} — home`}>
+    <span class="brand-org">{site.name}</span>
     {section && <><span class="brand-sep">·</span><span class="brand-system">{section}</span></>}
     {dataset && <><span class="brand-sep">·</span><span class="brand-dataset">{dataset}</span></>}
   </a>

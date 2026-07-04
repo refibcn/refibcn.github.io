@@ -1,35 +1,36 @@
-/* themes/organic.css — ACTIVE direction. Andrea's three-pillar lock
- * (Neural / Tissue / Flow), 260602-ratified. Ported from origin/andrea
- * colors-locked.json + tokens.css (2026-05-22). */
+/* themes/organic.css — Andrea's full three-pillar direction
+ * (Neural / Tissue / Flow). Ported from origin/andrea colors-locked.json
+ * + tokens.css — the 2026-05-31 lock (4-step ramps, light=1 mid=3 dark=4);
+ * primary = flow red per the 2026-07-04 decision. */
 
 :root {
   /* §2.1 Paper neutrals */
   --paper-50: #F5F5F5; --paper-100: #F1F0EE; --paper-200: #DDD7CF;
-  --paper-700: #41312A; --paper-900: #2A1810;
+  --paper-700: #4B3B34; --paper-900: #2A1810;
 
-  /* §2.2 Pillars (1 light -> 6 deep) */
-  --pillar-neural-1: #D9E6FF; --pillar-neural-2: #AFC9FE; --pillar-neural-3: #83ACFE;
-  --pillar-neural-4: #598FFD; --pillar-neural-5: #3A61BD; --pillar-neural-6: #2A4A9E;
+  /* §2.2 Pillars (1 light -> 4 deep, 05-31 lock) */
+  --pillar-neural-1: #B8F4ED; --pillar-neural-2: #85C1BB;
+  --pillar-neural-3: #426EAF; --pillar-neural-4: #184B7A;
   --pillar-neural-light: var(--pillar-neural-1);
-  --pillar-neural-mid: var(--pillar-neural-4);
-  --pillar-neural-dark: var(--pillar-neural-6);
+  --pillar-neural-mid: var(--pillar-neural-3);
+  --pillar-neural-dark: var(--pillar-neural-4);
 
-  --pillar-tissue-1: #E5F5D8; --pillar-tissue-2: #C2DFA7; --pillar-tissue-3: #9FC974;
-  --pillar-tissue-4: #7CB342; --pillar-tissue-5: #477125; --pillar-tissue-6: #2D5016;
+  --pillar-tissue-1: #DDF48A; --pillar-tissue-2: #ACB05E;
+  --pillar-tissue-3: #447932; --pillar-tissue-4: #2F4937;
   --pillar-tissue-light: var(--pillar-tissue-1);
-  --pillar-tissue-mid: var(--pillar-tissue-4);
-  --pillar-tissue-dark: var(--pillar-tissue-6);
+  --pillar-tissue-mid: var(--pillar-tissue-3);
+  --pillar-tissue-dark: var(--pillar-tissue-4);
 
-  --pillar-flow-1: #F9E2C3; --pillar-flow-2: #F6CC92; --pillar-flow-3: #F3B661;
-  --pillar-flow-4: #F0A030; --pillar-flow-5: #AC6A35; --pillar-flow-6: #8B5038;
+  --pillar-flow-1: #FFDD80; --pillar-flow-2: #E58961;
+  --pillar-flow-3: #C92637; --pillar-flow-4: #613400;
   --pillar-flow-light: var(--pillar-flow-1);
-  --pillar-flow-mid: var(--pillar-flow-4);
-  --pillar-flow-dark: var(--pillar-flow-6);
+  --pillar-flow-mid: var(--pillar-flow-3);
+  --pillar-flow-dark: var(--pillar-flow-4);
 
-  /* §2.3 Library accents (data-viz / status) */
-  --lib-coral: #E67E50; --lib-amber: #F2C200; --lib-sky: #598FFD; --lib-rose: #FF578B;
-  --lib-slate: #5A6B7A; --lib-teal: #2A9D8F; --lib-gold: #C9A227; --lib-indigo: #4D1773;
-  --lib-moss: #214033;
+  /* §2.3 Library accents (data-viz, 05-31 set) */
+  --lib-gris: #AEADA5; --lib-ocean: #4C6BC1; --lib-blue: #6BB5B4;
+  --lib-green: #39A659; --lib-yellow: #D5AD1C; --lib-orange: #DC7221;
+  --lib-red: #CC4727; --lib-pink: #DC697F; --lib-purple: #8161BF;
 
   /* Semantic mapping (Andrea's wiring) */
   --bg: var(--paper-50);
@@ -39,18 +40,17 @@
   --text-muted: var(--paper-700);
   --border-default: var(--paper-200);
   --border-subtle: color-mix(in srgb, var(--paper-200) 55%, var(--paper-50));
-  --primary: var(--pillar-flow-mid);
-  --primary-hover: var(--pillar-flow-dark);
-  /* amber #F0A030 is light -> dark-ink foreground for WCAG AA (verified Task 19) */
-  --primary-foreground: var(--paper-900);
+  --primary: var(--pillar-flow-mid);          /* red #C92637 */
+  --primary-hover: var(--pillar-flow-dark);   /* deep brown #613400 */
+  --primary-foreground: var(--paper-50);      /* paper-50 on red — AA 5.05:1 */
   --accent: var(--pillar-neural-light);
   --accent-foreground: var(--pillar-neural-dark);
 
   /* Status + foregrounds */
-  --success: var(--lib-moss);  --success-foreground: #F4F6F2;
-  --warning: var(--lib-amber); --warning-foreground: var(--paper-900);
-  --danger:  #C44A32;          --danger-foreground: #FFF8F6;
-  --info:    var(--lib-sky);   --info-foreground: #F4F8FF;
+  --success: var(--pillar-tissue-dark);  --success-foreground: #F4F6F2;      /* 9.07:1 */
+  --warning: var(--pillar-flow-light);   --warning-foreground: var(--paper-900); /* 12.86:1 */
+  --danger:  #7A2618;                    --danger-foreground: #FFF8F6;       /* dark brick, distinct from primary */
+  --info:    var(--pillar-neural-mid);   --info-foreground: var(--paper-50); /* 4.72:1 */
 
   --gradient-bridge: linear-gradient(135deg, var(--pillar-neural-mid), var(--pillar-flow-mid));
 

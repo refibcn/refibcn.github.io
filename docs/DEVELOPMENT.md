@@ -27,8 +27,9 @@
 
 ## Design Feedback
 
-> Current theme = "editorial-organic": Averia Serif Libre titles · Inter body · IBM Plex Mono labels ·
-> straight edges · three-pillar palette (Neural / Tissue / Flow) · tissue backgrounds.
+> Current theme = "editorial-organic": Averia Serif Libre titles · Geist body · IBM Plex Mono labels ·
+> straight edges · three-pillar palette (Neural / Tissue / Flow, Andrea's 2026-05-31 lock — 4-step
+> ramps, red primary) · tissue backgrounds + grainy-aurora pillar fields.
 > The whole palette/type can be swapped in one line (`src/styles/theme.css`) — nothing is final.
 
 -
@@ -92,8 +93,8 @@
 
 ## Questions for Discussion
 
-- [ ] **Primary action colour** — Andrea's latest palette lock (2026-05-31) ends the Flow ramp in red (`#C92637`): embrace red as primary, or keep a warm amber/coral?
-- [ ] **Body font** — Geist (Andrea's direction) vs Inter (editorial base)? Display stays Averia either way.
+- [x] **Primary action colour** — ~~embrace red as primary, or keep a warm amber/coral?~~ → **Red** (`#C92637`), decided 2026-07-04 (see Decisions Made).
+- [x] **Body font** — ~~Geist vs Inter?~~ → **Geist**, decided 2026-07-04 (see Decisions Made).
 - [ ] **Landing vs deeper pages** — single-page with anchors, or keep separate pages and differentiate their content?
 - [ ] **Custom domain** — when to point refibcn.cat (or subdomain) at this?
 - [ ] **Group name** — survey pending; the site re-skins via tokens when decided.
@@ -112,16 +113,20 @@
 | Landing adopts Andrea's prepared structure + Averia titles | 2026-06-11 | build session |
 | Naming stays OPEN / ReFi BCN — publishing not gated on rebrand | 2026-06-30 | team decision |
 | Published to GitHub Pages under the refibcn account (`gh-pages` branch) | 2026-07-01 | this repo |
+| **Primary action colour = red** `#C92637` (flow step 3 of Andrea's 2026-05-31 lock; paper foreground, AA 5.23:1). Guardrails: `--danger` → dark brick `#7A2618`, `--warning` → flow-1 yellow `#FFDD80` | 2026-07-04 | Luiz, iteration-3 session |
+| **Body font = Geist** (Andrea's direction). Display stays Averia Serif Libre; eyebrows/labels stay IBM Plex Mono (Geist Mono = separate future call) | 2026-07-04 | Luiz, iteration-3 session |
+| 2026-05-31 palette lock adopted in both organic themes (4-step ramps, new 9-colour data-viz library); aurora pillar fields recreated in pure CSS (watermarked mesh refs NOT shipped) | 2026-07-04 | iteration-3 session |
 
 ---
 
 ## Next Steps (proposed — next iteration)
 
-- [ ] Adopt Andrea's 2026-05-31 palette lock (pending the primary-colour call above)
-- [ ] Wire in Andrea's real project illustrations (optimized for web)
-- [ ] Recreate the grainy-aurora pillar backgrounds in CSS (mood refs are watermarked stock — recreate, don't ship)
-- [ ] Fold Andrea's live Voronoi tissue editor into `/lab`
-- [ ] Housekeeping: centralize the org name into one token · OG/meta tags · 404 page
+- [x] Adopt Andrea's 2026-05-31 palette lock — done 2026-07-04 (red primary per decision)
+- [x] Wire in Andrea's real project illustrations (optimized for web) — done 2026-07-01 (iteration 2)
+- [x] Recreate the grainy-aurora pillar backgrounds in CSS — done 2026-07-04 (`Aurora.astro`, pure CSS)
+- [x] Fold Andrea's live Voronoi tissue editor into `/lab` — done 2026-07-01 (`/lab-tools/`)
+- [x] Housekeeping: centralize the org name into one token · OG/meta tags · 404 page — done 2026-07-01
+- [ ] Body font follow-up: Geist Mono for eyebrows/labels? (IBM Plex Mono kept for now)
 - [ ] Phase 1b: wire the Catalunya maps into `/atlas`
 
 ---

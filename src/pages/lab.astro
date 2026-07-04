@@ -5,12 +5,13 @@ import Button from "../components/Button.astro";
 import Tissue from "../components/Tissue.astro";
 import FlowDivider from "../components/FlowDivider.astro";
 import NeuralWeb from "../components/NeuralWeb.astro";
+import Aurora from "../components/Aurora.astro";
 
-const neutrals = ["--paper-50", "--paper-100", "--paper-200", "--paper-700", "--paper-900"];
-const neural = ["--pillar-neural-1", "--pillar-neural-2", "--pillar-neural-3", "--pillar-neural-4", "--pillar-neural-5", "--pillar-neural-6"];
-const tissue = ["--pillar-tissue-1", "--pillar-tissue-2", "--pillar-tissue-3", "--pillar-tissue-4", "--pillar-tissue-5", "--pillar-tissue-6"];
-const flow = ["--pillar-flow-1", "--pillar-flow-2", "--pillar-flow-3", "--pillar-flow-4", "--pillar-flow-5", "--pillar-flow-6"];
-const library = ["--lib-coral", "--lib-amber", "--lib-sky", "--lib-rose", "--lib-slate", "--lib-teal", "--lib-gold", "--lib-indigo", "--lib-moss"];
+const neutrals = ["--paper", "--ivory", "--sand", "--ink", "--rule"];
+const neural = ["--pillar-neural-1", "--pillar-neural-2", "--pillar-neural-3", "--pillar-neural-4"];
+const tissue = ["--pillar-tissue-1", "--pillar-tissue-2", "--pillar-tissue-3", "--pillar-tissue-4"];
+const flow = ["--pillar-flow-1", "--pillar-flow-2", "--pillar-flow-3", "--pillar-flow-4"];
+const library = ["--lib-gris", "--lib-ocean", "--lib-blue", "--lib-green", "--lib-yellow", "--lib-orange", "--lib-red", "--lib-pink", "--lib-purple"];
 ---
 
 <Layout title="Lab — internal" current="home" noindex={true} description="Internal element + branding test surface.">
@@ -25,13 +26,14 @@ const library = ["--lib-coral", "--lib-amber", "--lib-sky", "--lib-rose", "--lib
     </div>
 
     <div class="note">
-      <strong>Dual-theme architecture.</strong> The active direction is <code>organic</code>
-      (Andrea's three-pillar lock). Flip the whole site to the v2 <code>brand-family</code>
+      <strong>Dual-theme architecture.</strong> The active theme is <code>editorial-organic</code>
+      (BIS editorial structure + Andrea's 2026-05-31 three-pillar lock — 4-step ramps,
+      red primary). Flip the whole site to <code>organic</code> or the v2 <code>brand-family</code>
       palette by editing the single <code>@import</code> in <code>src/styles/theme.css</code>.
       Everything below re-renders from that one line.
     </div>
 
-    <h2>1. Color — paper neutrals</h2>
+    <h2>1. Color — editorial neutrals</h2>
     <div class="swatches">{neutrals.map((t) => (<div class="swatch" style={`background: var(${t})`}><code>{t}</code></div>))}</div>
 
     <h2>2. Pillars</h2>
@@ -42,10 +44,10 @@ const library = ["--lib-coral", "--lib-amber", "--lib-sky", "--lib-rose", "--lib
     <p class="eyebrow">Flow · rivers</p>
     <div class="swatches">{flow.map((t) => (<div class="swatch" style={`background: var(${t})`}><code>{t}</code></div>))}</div>
 
-    <h2 style="margin-top: var(--space-12);">3. Library accents (data-viz / status)</h2>
+    <h2 style="margin-top: var(--space-12);">3. Library accents (data-viz — Andrea's 05-31 set)</h2>
     <div class="swatches">{library.map((t) => (<div class="swatch" style={`background: var(${t})`}><code>{t}</code></div>))}</div>
 
-    <h2 style="margin-top: var(--space-12);">4. Typography <span style="font-family: var(--mono); font-size: var(--text-sm); color: var(--text-muted); text-transform: none;">(fonts follow the active theme — editorial-organic = Averia Serif Libre · Inter · IBM Plex Mono)</span></h2>
+    <h2 style="margin-top: var(--space-12);">4. Typography <span style="font-family: var(--mono); font-size: var(--text-sm); color: var(--text-muted); text-transform: none;">(fonts follow the active theme — editorial-organic = Averia Serif Libre · Geist · IBM Plex Mono)</span></h2>
     <p class="display" style="font-size: var(--text-5xl); margin: 0;">Display — serif</p>
     <h2 style="margin: var(--space-4) 0 0;">Headings — serif</h2>
     <h3 style="margin: var(--space-2) 0 0;">Subsection — serif</h3>
@@ -64,6 +66,12 @@ const library = ["--lib-coral", "--lib-amber", "--lib-sky", "--lib-rose", "--lib
     <FlowDivider />
     <p class="eyebrow" style="margin-top: var(--space-6);">Neural · network treatment</p>
     <div class="motif-box motif-box--neural"><NeuralWeb seed={11} nodes={20} tone="--pillar-neural-mid" /></div>
+    <p class="eyebrow" style="margin-top: var(--space-6);">Aurora · grainy gradient fields (pure CSS — recreates the mesh-ref direction)</p>
+    <div class="motif-row">
+      <div class="motif-box"><Aurora pillar="neural" opacity={0.8} /></div>
+      <div class="motif-box"><Aurora pillar="tissue" opacity={0.8} /></div>
+      <div class="motif-box"><Aurora pillar="flow" opacity={0.8} /></div>
+    </div>
 
     <h2 style="margin-top: var(--space-12);">6. Primitives</h2>
     <h3>Buttons</h3>

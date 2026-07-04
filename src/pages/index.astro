@@ -6,6 +6,7 @@ import Layout from "../components/Layout.astro";
 import Tissue from "../components/Tissue.astro";
 import FlowDivider from "../components/FlowDivider.astro";
 import PillarBadge from "../components/PillarBadge.astro";
+import Aurora from "../components/Aurora.astro";
 
 const d = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/landing.yaml"), "utf8")) as any;
 ---
@@ -47,6 +48,7 @@ const d = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/landing.y
       <div class="pillars">
         {d.pillars.map((p: any) => (
           <article class={`pillar-row pillar-row--${p.key}`}>
+            <Aurora pillar={p.key} opacity={0.45} />
             <div class="pillar-row__head">
               <PillarBadge pillar={p.key} label={p.badge} />
               <h3 class="pillar-row__title">{p.title}</h3>
@@ -157,7 +159,8 @@ const d = yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/landing.y
 
   /* Pillar rows */
   .pillars { display: flex; flex-direction: column; gap: var(--space-12); }
-  .pillar-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--ink); }
+  .pillar-row { position: relative; isolation: isolate; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-10); padding: var(--space-8) var(--space-6) var(--space-8); border-top: 1px solid var(--ink); }
+  .pillar-row__head, .pillar-row__services { position: relative; z-index: 1; }
   .pillar-row__title { font-size: var(--text-xl); margin: var(--space-3) 0 var(--space-3); }
   .pillar-row__intro { color: var(--text-muted); line-height: var(--leading-body); }
   .pillar-row__services { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-5); }

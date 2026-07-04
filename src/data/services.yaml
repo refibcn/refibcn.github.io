@@ -1,16 +1,33 @@
+# Service lines for /what-we-do. Each maps to a capability pillar and,
+# where we have one, links to the case study that proves it.
 services:
   - title: Bioregional mapping & labs
     body: Territorial visualization and community mapping. We build tools like the Bioregional Intelligence System dashboards.
     href: /what-we-do/#bioregional-mapping
+    pillar: neural
+    deliverable: Interactive maps and dashboards a network can revise together
+    case: { href: /atlas/, label: Bioregional Intelligence }
   - title: Knowledge base structuring & commons
     body: Making organizational knowledge legible and reusable. From ecosystem maps to internal handbooks.
     href: /what-we-do/#knowledge-base
+    pillar: neural
+    deliverable: An editable, living knowledge base the team owns
+    case: { href: /projects/bioregional-garden/, label: Bioregional Garden }
   - title: Process automations
     body: Workflow scaffolding for regenerative organizations — funding pipelines, application tracking, governance flows.
     href: /what-we-do/#process-automations
+    pillar: tissue
+    deliverable: Aligned workflows that cut coordination tax, not add a layer
+    case: { href: /projects/refi-dao-regen-coordination/, label: ReFi DAO / Regen Coordination }
   - title: Multi-stakeholder research
     body: Qualitative + quantitative + place-based research. We deliver editable databases, not static reports.
     href: /what-we-do/#research
+    pillar: neural
+    deliverable: Editable databases, not static reports
+    case: { href: /projects/bwl-portfolio-mapping/, label: Bioregional Weaving Labs }
   - title: Workshops & program facilitation
     body: Design and run programs end-to-end. Like Regenerant Catalunya — our flagship local funding program.
     href: /what-we-do/#workshops
+    pillar: flow
+    deliverable: A program designed, run, and handed over end-to-end
+    case: { href: /projects/regenerant-catalunya/, label: Regenerant Catalunya }

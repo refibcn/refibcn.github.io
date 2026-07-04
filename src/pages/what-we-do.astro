@@ -1,40 +1,77 @@
 ---
 import Layout from "../components/Layout.astro";
-import SectionBlock from "../components/SectionBlock.astro";
+import PageHero from "../components/PageHero.astro";
+import PillarBadge from "../components/PillarBadge.astro";
+import ProcessStrip from "../components/ProcessStrip.astro";
+import CTABand from "../components/CTABand.astro";
 import yaml from "js-yaml";
 import fs from "node:fs";
 import path from "node:path";
 
 const services = (yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/services.yaml"), "utf8")) as any).services;
 ---
-
 <Layout title="What we do" current="what-we-do" description="Five operational service lines bridging social-economy practice with regenerative-finance infrastructure.">
-  <SectionBlock title="What we do" intro="Five operational service lines that bridge ESS (Economia Social i Solidària) practice with regenerative-finance infrastructure. Each is something cooperatives and regenerative networks already need — surfaced with the right tools, never buzzwords.">
-    {services.map((s: any) => (
-      <article id={s.href.split('#')[1]} class="service">
-        <h3 class="service__title">{s.title}</h3>
-        <p class="service__body">{s.body}</p>
-      </article>
-    ))}
+  <PageHero
+    eyebrow="What we do"
+    title="Five service lines, each already needed"
+    lede="We bridge ESS (Economia Social i Solidària) practice with regenerative-finance infrastructure. Every line is something cooperatives and regenerative networks already need — surfaced with the right tools, never buzzwords."
+    motif="aurora-tissue"
+  />
 
-    <div class="cta">
-      <p>Most engagements start with a free intro call. We listen, then send a short proposal with options and a price — no obligation.</p>
-      <a class="btn btn--primary" href="/contact">Book a free intro call</a>
+  <section class="block">
+    <div class="block__inner">
+      <ol class="services">
+        {services.map((s: any, i: number) => (
+          <li class="svc" id={s.href.split('#')[1]}>
+            <span class="svc__index">{String(i + 1).padStart(2, "0")}</span>
+            <div class="svc__main">
+              <div class="svc__head">
+                <PillarBadge pillar={s.pillar} />
+                <h3 class="svc__title">{s.title}</h3>
+              </div>
+              <p class="svc__body">{s.body}</p>
+              <p class="svc__deliverable"><span class="svc__deliv-label">Deliverable</span>{s.deliverable}</p>
+              {s.case && <a class="svc__case" href={s.case.href}>Proof · {s.case.label} →</a>}
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
-  </SectionBlock>
+  </section>
+
+  <section class="block block--alt">
+    <div class="block__inner">
+      <ProcessStrip />
+    </div>
+  </section>
+
+  <CTABand />
 </Layout>
 
 <style>
-  .service { margin-bottom: var(--space-10); }
-  .service__title { margin-bottom: var(--space-2); }
-  .service__body { color: var(--text-muted); max-width: 60ch; line-height: var(--leading-body); }
-  .cta {
-    margin-top: var(--space-12);
-    padding: var(--space-8);
-    background: var(--surface-1);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius);
-    max-width: 60ch;
+  .block { padding: var(--space-16) var(--gutter); }
+  .block--alt { background: var(--surface-1); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+  .block__inner { max-width: var(--container-default); margin: 0 auto; }
+
+  .services { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .svc {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: var(--space-5);
+    padding: var(--space-8) 0;
+    border-top: 1px solid var(--ink);
   }
-  .cta p { margin: 0 0 var(--space-5); }
+  .svc:last-child { border-bottom: 1px solid var(--ink); }
+  .svc__index { font-family: var(--mono); font-size: var(--text-lg); color: var(--primary); line-height: 1.2; }
+  .svc__head { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-3); }
+  .svc__title { margin: 0; font-size: var(--text-xl); }
+  .svc__body { color: var(--text-muted); line-height: var(--leading-body); max-width: 62ch; margin: 0 0 var(--space-4); }
+  .svc__deliverable { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; font-size: var(--text-sm); margin: 0 0 var(--space-3); }
+  .svc__deliv-label { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+  .svc__case { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary); text-decoration: none; }
+  .svc__case:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .svc { grid-template-columns: 1fr; gap: var(--space-2); }
+  }
 </style>

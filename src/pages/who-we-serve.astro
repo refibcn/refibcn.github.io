@@ -3,39 +3,90 @@ import fs from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
 import Layout from "../components/Layout.astro";
-import SectionBlock from "../components/SectionBlock.astro";
+import PageHero from "../components/PageHero.astro";
+import PillarBadge from "../components/PillarBadge.astro";
+import CTABand from "../components/CTABand.astro";
 
 const data = yaml.load(
   fs.readFileSync(path.join(process.cwd(), "src/data/who-we-serve.yaml"), "utf8")
-) as { intro: string; audiences: { name: string; body: string }[]; secondary: string };
+) as {
+  intro: string;
+  audiences: { name: string; body: string; pillars?: string[]; signals?: string[] }[];
+  secondary: string;
+};
 ---
 <Layout title="Who we serve" current="who-we-serve" description="The organizations and communities ReFi BCN works with across Catalonia and beyond.">
-  <SectionBlock id="who-we-serve" title="Who we serve" intro={data.intro}>
-    <div class="audiences">
-      {data.audiences.map((a) => (
-        <article class="audience">
-          <h3 class="audience__name">{a.name}</h3>
-          <p class="audience__body">{a.body}</p>
-        </article>
-      ))}
+  <PageHero
+    eyebrow="Who we serve"
+    title="Who we work with"
+    lede={data.intro}
+    motif="aurora-neural"
+  />
+
+  <section class="block">
+    <div class="block__inner">
+      <div class="audiences">
+        {data.audiences.map((a) => (
+          <article class="audience">
+            {a.pillars && <div class="audience__badges">{a.pillars.map((p) => <PillarBadge pillar={p as any} />)}</div>}
+            <h3 class="audience__name">{a.name}</h3>
+            <p class="audience__body">{a.body}</p>
+            {a.signals && (
+              <>
+                <p class="audience__signals-label">You're a fit if…</p>
+                <ul class="audience__signals">
+                  {a.signals.map((s) => <li>{s}</li>)}
+                </ul>
+              </>
+            )}
+          </article>
+        ))}
+      </div>
+      <p class="secondary">{data.secondary}</p>
     </div>
-    <p class="secondary">{data.secondary}</p>
-  </SectionBlock>
+  </section>
+
+  <CTABand />
 </Layout>
 
 <style>
+  .block { padding: var(--space-16) var(--gutter); }
+  .block__inner { max-width: var(--container-default); margin: 0 auto; }
+
   .audiences {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-8);
-    margin-top: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
+    gap: var(--space-6);
   }
   .audience {
-    border-left: 2px solid var(--accent);
-    padding-left: var(--space-5);
+    border: 1px solid var(--ink);
+    background: var(--bg);
+    padding: var(--space-7);
+    display: flex;
+    flex-direction: column;
   }
-  .audience__name { margin-bottom: var(--space-2); }
-  .audience__body { color: var(--text-muted); line-height: var(--leading-body); }
+  .audience__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-4); }
+  .audience__name { margin: 0 0 var(--space-3); font-size: var(--text-lg); }
+  .audience__body { color: var(--text-muted); line-height: var(--leading-body); margin: 0 0 var(--space-5); }
+  /* margin-top:auto on the label sinks the whole label+list pair to the card
+     foot together, so short-body cards don't split the label from its bullets. */
+  .audience__signals-label { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: auto 0 var(--space-2); }
+  .audience__signals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .audience__signals li {
+    position: relative;
+    padding-left: var(--space-5);
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+  }
+  .audience__signals li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.5em;
+    height: 0.5em;
+    background: var(--primary);
+  }
   .secondary {
     margin-top: var(--space-12);
     color: var(--text-muted);

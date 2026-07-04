@@ -1,26 +1,50 @@
 ---
 import Layout from "../components/Layout.astro";
-import SectionBlock from "../components/SectionBlock.astro";
-import ProjectCard from "../components/ProjectCard.astro";
+import PageHero from "../components/PageHero.astro";
+import FeatureGrid from "../components/FeatureGrid.astro";
+import CTABand from "../components/CTABand.astro";
 import yaml from "js-yaml";
 import fs from "node:fs";
 import path from "node:path";
 
 const projects = (yaml.load(fs.readFileSync(path.join(process.cwd(), "src/data/projects.yaml"), "utf8")) as any).projects;
----
 
-<Layout title="Projects" current="projects">
-  <SectionBlock title="Projects" intro="Case studies from work we've actually done — not aspirations.">
-    <div class="grid">
-      {projects.map((p: any) => (<ProjectCard title={p.title} body={p.body} image={p.image} href={p.external ? p.href : `/projects/${p.slug}`} external={p.external} />))}
+// Normalize case-study records into FeatureGrid items. The project title is
+// the card heading; its theme becomes the mono category eyebrow; the excerpt
+// is the first paragraph of the body, trimmed at a word boundary.
+const excerpt = (body: string, max = 190) => {
+  const first = (body ?? "").split(/\n\s*\n/)[0].replace(/\s+/g, " ").trim();
+  if (first.length <= max) return first;
+  return first.slice(0, first.lastIndexOf(" ", max)).trim() + "…";
+};
+const items = projects.map((p: any) => ({
+  heading: p.title,
+  name: p.theme,
+  excerpt: excerpt(p.body),
+  image: p.image,
+  href: p.external ? p.href : `/projects/${p.slug}/`,
+  external: p.external,
+  pillars: p.pillars,
+}));
+---
+<Layout title="Projects" current="projects" description="Case studies from work ReFi BCN has actually done — funding programs, network coordination, and territorial sensemaking.">
+  <PageHero
+    eyebrow="Projects"
+    title="Case studies from work we've actually done"
+    lede="Funding programs, network coordination, and territorial sensemaking across Catalonia and beyond — not aspirations, engagements we designed, ran, and handed over."
+    motif="tissue"
+  />
+
+  <section class="block">
+    <div class="block__inner">
+      <FeatureGrid items={items} />
     </div>
-  </SectionBlock>
+  </section>
+
+  <CTABand />
 </Layout>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-6);
-  }
+  .block { padding: var(--space-16) var(--gutter); }
+  .block__inner { max-width: var(--container-default); margin: 0 auto; }
 </style>

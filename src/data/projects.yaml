@@ -8,8 +8,17 @@ projects:
     role: Program design · funding coordination · facilitation
     theme: Regenerative funding network
     locality: Catalonia
+    pillars: [tissue, flow]
     image: /assets/projects/regenerant-catalunya-montserrat-dusk.jpg
     external: false
+    # Verifiable figures only (match landing/about copy) — rendered as case-study callouts.
+    stats:
+      - value: "€27K+"
+        label: pooled across local + global sources
+      - value: "10+"
+        label: local regenerative projects funded
+      - value: "GG24"
+        label: Gitcoin Grants round designed & run
     links:
       - label: Visit the program site
         url: https://regenerant-catalunya.refibcn.cat
@@ -38,6 +47,7 @@ projects:
     role: Knowledge-base structuring · portfolio visualization
     theme: Digital systems for a partner network
     locality: Cross-bioregional
+    pillars: [neural, tissue]
     external: false
     # FLAG: no public URL for this engagement — add link_url or keep internal-only.
     body: |
@@ -56,6 +66,7 @@ projects:
     role: Local node · governance design · funding-round coordination
     theme: Network coordination
     locality: Global federation
+    pillars: [tissue]
     image: /assets/projects/refi-dao-knowledge-graph.png
     external: false
     links:
@@ -80,6 +91,7 @@ projects:
     role: Knowledge-base structuring · commons stewardship
     theme: Bioregional knowledge commons
     locality: Catalonia
+    pillars: [neural]
     external: false
     links:
       - label: Visit the garden
@@ -101,6 +113,7 @@ projects:
     role: Knowledge base · bioregional learning network
     theme: Place-based knowledge
     locality: Iberian high steppes
+    pillars: [neural, tissue]
     external: true
     href: https://andrea-diome.github.io/altiplano-estepario
     body: |

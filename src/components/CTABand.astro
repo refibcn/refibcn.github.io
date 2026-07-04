@@ -1,0 +1,51 @@
+---
+// CTABand.astro — full-width closing call-to-action band: flow aurora +
+// grain behind an editorial panel. One per page, always last before footer.
+import Aurora from "./Aurora.astro";
+
+interface Props {
+  title?: string;
+  body?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+const {
+  title = "Working across a territory or network?",
+  body = "Start with a free intro call — tell us what you're working on and we'll say honestly whether we can help.",
+  ctaLabel = "Book a free intro call",
+  ctaHref = "/contact/",
+} = Astro.props;
+---
+<section class="cta-band">
+  <Aurora pillar="flow" opacity={0.5} />
+  <div class="cta-band__inner">
+    <div>
+      <h2 class="cta-band__title">{title}</h2>
+      <p class="cta-band__body">{body}</p>
+    </div>
+    <a class="btn btn--primary" href={ctaHref}>{ctaLabel}</a>
+  </div>
+</section>
+
+<style>
+.cta-band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-top: 1px solid var(--ink, var(--border-default));
+  padding: var(--space-16) var(--gutter);
+}
+.cta-band__inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--container-default);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+.cta-band__title { font-size: clamp(1.6rem, 2.8vw, 2.2rem); margin: 0 0 var(--space-3); max-width: 24ch; }
+.cta-band__body { color: var(--text-muted); max-width: 52ch; margin: 0; line-height: var(--leading-body); }
+</style>

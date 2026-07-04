@@ -59,5 +59,28 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
   {!minimal && <Nav current={current} section={section} dataset={dataset} />}
   <main><slot /></main>
   {!minimal && <Footer />}
+  <script>
+    // Section reveal (iteration 4). Classes are added here, so no-JS
+    // visitors get plain static rendering; reduced-motion users get 0ms
+    // transitions via the motion tokens.
+    const els = document.querySelectorAll("main > section, main > header, main > article");
+    if ("IntersectionObserver" in window && els.length) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("reveal--in");
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.08 },
+      );
+      els.forEach((el) => {
+        el.classList.add("reveal");
+        io.observe(el);
+      });
+    }
+  </script>
 </body>
 </html>

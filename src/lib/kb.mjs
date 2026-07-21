@@ -91,3 +91,38 @@ export function graphData(objects) {
     links,
   };
 }
+
+// ── Publication filter (public lens) — FAIL-CLOSED ────────────────────────
+// An object renders publicly only if every rule passes; unknown states deny.
+// The `publish: true` in-scope marker + PUBLIC_TIERS vocabulary are set at
+// review / D0 ratification — until then this correctly returns zero objects.
+const OK_MATURITY = new Set(["reviewed", "published"]);
+const PUBLIC_TIERS = new Set(["public"]);
+
+function pairKeys(o) {
+  const keys = [];
+  if (o.raw.work_order) keys.push(`wo:${o.raw.work_order}`);
+  if (o.origin) keys.push(`or:${o.origin}`);
+  return keys;
+}
+
+export function publishableKb(objects) {
+  const boundaryIndex = new Map();
+  for (const b of objects) {
+    if (b.schema !== "public-use-boundary") continue;
+    for (const k of pairKeys(b)) {
+      if (!boundaryIndex.has(k)) boundaryIndex.set(k, []);
+      boundaryIndex.get(k).push(b);
+    }
+  }
+  return objects.filter((o) => {
+    if (o.schema === "public-use-boundary") return false; // governance metadata, never a page
+    if (o.raw.publish !== true) return false;             // in-scope marker (review-time)
+    if (!OK_MATURITY.has(o.maturity)) return false;
+    if (o.raw.ai_assisted === true) return false;         // promotion must clear this
+    const paired = pairKeys(o).flatMap((k) => boundaryIndex.get(k) ?? []);
+    for (const b of paired) if (!PUBLIC_TIERS.has(b.raw.tier)) return false;
+    if (o.high_risk && !paired.some((b) => PUBLIC_TIERS.has(b.raw.tier))) return false;
+    return true;
+  });
+}

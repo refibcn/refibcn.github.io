@@ -6,13 +6,13 @@
   "description": "ReFi BCN — the new coop website (refibcn.cat). Consolidated Astro site: marketing + Atlas (maps) + Bioregional Commons. Built on the BIS editorial shell with Andrea's organic atmosphere.",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/verify-public-kb.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "test": "node --test tests/",
     "protect:commons": "node scripts/protect-commons-review.mjs",
     "verify:commons": "node scripts/verify-commons-protected.mjs",
-    "build:commons-protected": "astro build && npm run protect:commons && npm run verify:commons"
+    "build:commons-protected": "COMMONS_REVIEW=1 astro build && npm run protect:commons && npm run verify:commons"
   },
   "dependencies": {
     "astro": "^5.0.0",

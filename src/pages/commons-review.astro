@@ -6,7 +6,11 @@
 import { loadKb, facets, graphData } from "../lib/kb.mjs";
 import { COLORS } from "../lib/kb-render.mjs";
 
-const objects = loadKb();
+// Data only exists in the INTERNAL build (the encrypted bucket). A plain
+// `astro build` renders a stub so a public site deploy can never ship the
+// raw dataset (env gate = belt; verify-public-kb canary scan = braces).
+const INTERNAL = process.env.COMMONS_REVIEW === "1";
+const objects = INTERNAL ? loadKb() : [];
 const { schemas, domains, highRisk } = facets(objects);
 const graph = graphData(objects);
 const bySchema = Object.fromEntries(schemas.map((s) => [s, objects.filter((o) => o.schema === s).length]));
@@ -135,6 +139,8 @@ const inlineJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
   </head>
 
   <body>
+    {INTERNAL && (
+      <>
     <header>
       <h1>Knowledge Commons — internal review</h1>
       <div class="sub">
@@ -474,5 +480,17 @@ const inlineJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
         }
       })();
     </script>
+      </>
+    )}
+    {!INTERNAL && (
+      <main style="max-width:560px;margin:18vh auto;padding:0 20px;text-align:center">
+        <h1>Internal review instance</h1>
+        <p style="color:#6b6660">
+          The knowledge-commons review surface is password-gated and lives at
+          <a href="https://refibcn.github.io/commons-review/">refibcn.github.io/commons-review</a>.
+          Ask the ReFi BCN team for access.
+        </p>
+      </main>
+    )}
   </body>
 </html>

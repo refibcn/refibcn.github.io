@@ -95,7 +95,7 @@
 
 - [x] **Primary action colour** — ~~embrace red as primary, or keep a warm amber/coral?~~ → **Red** (`#C92637`), decided 2026-07-04 (see Decisions Made).
 - [x] **Body font** — ~~Geist vs Inter?~~ → **Geist**, decided 2026-07-04 (see Decisions Made).
-- [ ] **Landing vs deeper pages** — single-page with anchors, or keep separate pages and differentiate their content?
+- [x] **Landing vs deeper pages** — ~~single-page with anchors, or keep separate pages?~~ → **Keep separate pages, differentiate by content** (iteration 4, editorial deepening). Each deeper page now carries what the landing can't — About gets team cards + proof + partners; What we do gets deliverables + engagement process; Who we serve gets fit-signals; case studies get stat callouts + prev/next.
 - [ ] **Custom domain** — when to point refibcn.cat (or subdomain) at this?
 - [ ] **Group name** — survey pending; the site re-skins via tokens when decided.
 - [ ]
@@ -116,6 +116,8 @@
 | **Primary action colour = red** `#C92637` (flow step 3 of Andrea's 2026-05-31 lock; paper foreground, AA 5.23:1). Guardrails: `--danger` → dark brick `#7A2618`, `--warning` → flow-1 yellow `#FFDD80` | 2026-07-04 | Luiz, iteration-3 session |
 | **Body font = Geist** (Andrea's direction). Display stays Averia Serif Libre; eyebrows/labels stay IBM Plex Mono (Geist Mono = separate future call) | 2026-07-04 | Luiz, iteration-3 session |
 | 2026-05-31 palette lock adopted in both organic themes (4-step ramps, new 9-colour data-viz library); aurora pillar fields recreated in pure CSS (watermarked mesh refs NOT shipped) | 2026-07-04 | iteration-3 session |
+| **Iteration 4 — editorial deepening.** Keep separate pages, differentiate by content. New shared components: `StatBand`, `ProcessStrip`, `TeamCard`, `CTABand`, `PageHero`. Every deeper page rebuilt; landing gets a stat band + numbered section eyebrows; sleekness pass (card/button hover, scroll-reveal, nav Contact button) | 2026-07-05 | iteration-4 session |
+| **Bioregional Commons + Atlas surfaces added.** `/atlas` full-page Catalunya program map (BIS absorption); `/commons` public knowledge surface — engine live but **content review-gated, zero objects published by design** (fail-closed `publishableKb` filter + public-dist canary); staticrypt-gated internal `/commons-review` surface; bespoke `/projects/regenerant-catalunya/` program page (inset map + network breakdown) | 2026-07-21 | commons/atlas build |
 
 ---
 
@@ -126,8 +128,9 @@
 - [x] Recreate the grainy-aurora pillar backgrounds in CSS — done 2026-07-04 (`Aurora.astro`, pure CSS)
 - [x] Fold Andrea's live Voronoi tissue editor into `/lab` — done 2026-07-01 (`/lab-tools/`)
 - [x] Housekeeping: centralize the org name into one token · OG/meta tags · 404 page — done 2026-07-01
+- [x] Phase 1b: wire the Catalunya maps into `/atlas` — done 2026-07-21 (full-page program map)
 - [ ] Body font follow-up: Geist Mono for eyebrows/labels? (IBM Plex Mono kept for now)
-- [ ] Phase 1b: wire the Catalunya maps into `/atlas`
+- [ ] Commons: flip the review gate to publish reviewed knowledge objects (currently zero by design)
 
 ---
 

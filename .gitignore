@@ -6,3 +6,4 @@ dist-commons-protected
 .DS_Store
 screenshots
 docs/dev-screenshots
+scripts/shoot-*.mjs

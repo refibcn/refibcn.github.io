@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-commons-protected
 .astro
 .env
 .DS_Store

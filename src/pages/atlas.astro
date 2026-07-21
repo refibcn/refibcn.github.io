@@ -1,12 +1,33 @@
 ---
 import Layout from "../components/Layout.astro";
-import SectionBlock from "../components/SectionBlock.astro";
+import CatalunyaProgramMap from "../components/CatalunyaProgramMap.astro";
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("cohort");
+const doc = entries[0]!.data;
 ---
 <Layout title="Atlas" current="atlas" section="Bioregional Commons" dataset="Catalunya"
-  description="A living atlas of Catalunya's regenerative territory — actors, cohorts, and bioregional-health signals.">
-  <SectionBlock id="atlas" title="Atlas" intro="A living atlas of Catalunya's regenerative territory — actors, project cohorts, and bioregional-health signals, made legible to a public audience." tissue={true} tissueSeed={1}>
-    <p class="lede">The territorial maps are being folded in from the Bioregional Intelligence work. The first dataset — the Regenerant Catalunya cohort — is live on the standalone surface while we integrate it here.</p>
-    <p><a class="btn btn--secondary" href="https://luizfernandosg.github.io/bioregional-intelligence/" target="_blank" rel="noopener">View the current maps ↗</a></p>
-    <p><span class="badge badge--info">In development</span> &nbsp; Maps integration — next phase.</p>
-  </SectionBlock>
+  description="A living atlas of Catalunya's regenerative territory — actors, cohorts, and bioregional signals.">
+  <section class="atlas-head">
+    <h1>Atlas</h1>
+    <p class="lede">
+      Catalunya's regenerative territory, mapped — the Regenerant Catalunya
+      cohort across its comarques, scouted by the Miceli (rural) and
+      La Fundició / Keras Buti (urban) networks.
+    </p>
+    <p class="atlas-links">
+      <a href="/projects/regenerant-catalunya/">Program dashboard →</a>
+      <a href="/projects/regenerant-catalunya/article/">Article view →</a>
+    </p>
+  </section>
+  <section class="atlas-map">
+    <CatalunyaProgramMap projects={doc.projects} networks={doc.networks} />
+  </section>
 </Layout>
+
+<style>
+  .atlas-head { max-width: var(--container-default, 1120px); margin: 0 auto; padding: 28px 20px 10px; }
+  .atlas-links a { margin-right: 18px; }
+  .atlas-map { max-width: var(--container-wide, 1360px); margin: 0 auto 56px; padding: 0 20px; }
+  .atlas-map :global(.program-map) { height: min(78vh, 880px); }
+</style>

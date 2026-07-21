@@ -1,11 +1,77 @@
 ---
 import Layout from "../components/Layout.astro";
 import SectionBlock from "../components/SectionBlock.astro";
+import { loadKb, facets, publishableKb } from "../lib/kb.mjs";
+import { COLORS, TYPE_INFO, escHtml, tagRowHtml } from "../lib/kb-render.mjs";
+
+const all = loadKb();
+const pub = publishableKb(all);
+const { schemas } = facets(all);
+const bySchema = Object.fromEntries(schemas.map((s) => [s, all.filter((o) => o.schema === s).length]));
+const inReview = all.filter((o) => o.maturity === "raw").length;
 ---
 <Layout title="Commons" current="commons" section="Bioregional Commons"
-  description="The bioregional knowledge commons — a shared, reusable knowledge base for Catalunya's regenerative ecosystem.">
-  <SectionBlock id="commons" title="Bioregional Commons" intro="A shared, reusable knowledge base for the territory's regenerative ecosystem — actors, practices, and resources gathered into a commons rather than scattered." tissue={true} tissueSeed={4}>
-    <p class="lede">The knowledge commons consolidates the organization's knowledge into one legible, maintainable surface. Content migration follows the host-architecture decision; the structure lives here.</p>
-    <p><span class="badge badge--info">In development</span></p>
+  description="The knowledge commons — one internal broad knowledge base; curated public collections, each with a clear scope, audience, and goal.">
+  <SectionBlock id="commons" title="Bioregional Commons" tissue={true} tissueSeed={4}
+    intro="One consolidated internal knowledge base; what publishes are curated collections with a clear scope, audience, and goal — starting with regeneration in Catalunya.">
+    <p class="lede">
+      We keep a single broad knowledge base internally and publish curated
+      sub-collections from it. Every published entry is human-reviewed, carries
+      its provenance, and belongs to a defined public scope — knowledge as a
+      commons, not a content dump.
+    </p>
+
+    <h3>What's inside</h3>
+    <div class="kb-types">
+      {schemas.map((s) => (
+        <article class="kb-type">
+          <span class="dot" style={`background:${COLORS[s]}`}></span>
+          <div>
+            <strong>{s}</strong> <span class="kb-count">{bySchema[s]}</span>
+            <p>{TYPE_INFO[s]}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <h3>Status</h3>
+    <p>
+      <strong>{all.length}</strong> knowledge objects ingested ·
+      <strong>{inReview}</strong> in human review ·
+      <strong>{pub.length}</strong> published{pub.length === 0 && " — the first curated collection (regeneration in Catalunya) is in review now"}.
+    </p>
+
+    {pub.length > 0 && (
+      <>
+        <h3>Published entries</h3>
+        <div class="kb-list">
+          {pub.map((o) => (
+            <a class="kb-card" href={`/commons/${o.schema}/${o.slug}/`}>
+              <strong>{o.title}</strong>
+              {o.summary && <p>{o.summary.slice(0, 200)}</p>}
+              <Fragment set:html={tagRowHtml(o)} />
+            </a>
+          ))}
+        </div>
+      </>
+    )}
+
+    <p class="kb-note">
+      Collaborating with us? A password-gated review instance with the full
+      working set exists — ask the team for access.
+    </p>
   </SectionBlock>
 </Layout>
+
+<style>
+  .kb-types { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin: 12px 0 28px; }
+  .kb-type { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--sand, #ece4d8); border-radius: 8px; padding: 12px 14px; background: var(--ivory, #f6f1e8); }
+  .kb-type .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; margin-top: 6px; }
+  .kb-type p { margin: 2px 0 0; font-size: 0.85rem; color: var(--rule, #6b6660); }
+  .kb-count { color: var(--rule, #6b6660); font-size: 0.8rem; }
+  .kb-list { display: grid; gap: 10px; margin: 12px 0; }
+  .kb-card { display: block; border: 1px solid var(--sand, #ece4d8); border-radius: 8px; padding: 13px 15px; background: var(--ivory, #f6f1e8); text-decoration: none; color: inherit; }
+  .kb-card:hover { border-color: var(--rule, #6b6660); }
+  .kb-card p { color: var(--rule, #6b6660); font-size: 0.85rem; margin: 4px 0 0; }
+  .kb-note { color: var(--rule, #6b6660); font-size: 0.85rem; margin-top: 24px; }
+</style>

@@ -18,7 +18,7 @@ interface Project {
 export function getStaticPaths() {
   const file = path.join(process.cwd(), "src/data/projects.yaml");
   const data = yaml.load(fs.readFileSync(file, "utf8")) as { projects: Project[] };
-  const internal = data.projects.filter((p) => p.slug && !p.external);
+  const internal = data.projects.filter((p) => p.slug && !p.external && p.slug !== "regenerant-catalunya");
   return internal.map((p, i) => ({
     params: { slug: p.slug! },
     props: {

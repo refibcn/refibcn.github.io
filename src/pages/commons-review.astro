@@ -4,6 +4,7 @@
 // HTML file so staticrypt encrypts all of it (no /_astro assets, no bundled data chunks).
 // Styling mirrors editorial-organic.css values inline for the same reason.
 import { loadKb, facets, graphData } from "../lib/kb.mjs";
+import { COLORS } from "../lib/kb-render.mjs";
 
 const objects = loadKb();
 const { schemas, domains, highRisk } = facets(objects);
@@ -11,16 +12,6 @@ const graph = graphData(objects);
 const bySchema = Object.fromEntries(schemas.map((s) => [s, objects.filter((o) => o.schema === s).length]));
 const rawCount = objects.filter((o) => o.maturity === "raw").length;
 
-// Schema palette — dataviz-validated on paper #fbf9f3 (all 6 checks pass; fixed assignment).
-const COLORS = {
-  "claim-evidence": "#C92637",
-  "concept-lineage": "#7B3B6E",
-  "encyclopedia-entry": "#3A6B24",
-  "public-use-boundary": "#B08000",
-  "resource": "#426EAF",
-  "signal": "#C96A2B",
-  "source-system": "#0A9B8E",
-};
 const inlineJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
 ---
 

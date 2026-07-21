@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { loadKb, facets, graphData } from "../src/lib/kb.mjs";
 import { publishableKb } from "../src/lib/kb.mjs";
+import { COLORS, escHtml, tagRowHtml } from "../src/lib/kb-render.mjs";
 
 // fileURLToPath, not .pathname — the checkout path contains spaces ("03 Libraries").
 const FIX = fileURLToPath(new URL("./fixtures/kb/", import.meta.url));
@@ -90,4 +91,12 @@ test("publishableKb: high-risk requires explicit public boundary", () => {
 
 test("publishableKb: real store yields ZERO public objects today", { skip: !existsSync("../../data/kb/index.json") }, () => {
   assert.equal(publishableKb(loadKb("../../data/kb/")).length, 0);
+});
+
+test("kb-render: colors cover all 7 schemas; tagRow escapes", () => {
+  for (const s of ["claim-evidence","concept-lineage","encyclopedia-entry","public-use-boundary","resource","signal","source-system"])
+    assert.match(COLORS[s] ?? "", /^#[0-9A-Fa-f]{6}$/, s);
+  assert.equal(escHtml('<b>"x"&'), "&lt;b&gt;&quot;x&quot;&amp;");
+  const html = tagRowHtml(mk({ subtype: "<script>", domain: "funding", high_risk: true }));
+  assert.ok(html.includes("&lt;script&gt;") && html.includes("high-risk") && !html.includes("<script>"));
 });

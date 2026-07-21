@@ -7,12 +7,16 @@ const DIST = "dist";
 const REQUIRED = [
   "index.html",
   "about/index.html",
-  "indicators/index.html",
-  "actors/index.html",
-  "programs/regenerant-catalunya/index.html",
-  "programs/regenerant-catalunya/article/index.html",
+  "atlas/index.html",
+  "commons/index.html",
+  "commons-review/index.html",
+  "contact/index.html",
+  "what-we-do/index.html",
+  "who-we-serve/index.html",
+  "projects/index.html",
+  "projects/regenerant-catalunya/index.html",
+  "projects/regenerant-catalunya/article/index.html",
   "geo/catalunya-comarques.geojson",
-  "CNAME",
 ];
 
 let failed = false;
@@ -27,13 +31,14 @@ for (const path of REQUIRED) {
 }
 
 // Sanity: cohort page must reference all 11 projects by id.
-const cohort = readFileSync(join(DIST, "programs/regenerant-catalunya/index.html"), "utf8");
+const cohort = readFileSync(join(DIST, "projects/regenerant-catalunya/index.html"), "utf8");
 const expectedIds = [
   "regeneracio-xyz", "resilience-earth", "de-bat-a-bat", "chapter-2", "anigami", "mixite",
   "laurel-31", "la-marmita", "les-juntes", "la-suculenta", "la-granja-del-tilo",
 ];
 for (const id of expectedIds) {
-  if (!cohort.includes(`data-project-id="${id}"`)) {
+  // The program map embeds the cohort as JSON (e.g. {"id":"resilience-earth",...}).
+  if (!cohort.includes(`"id":"${id}"`)) {
     console.error(`COHORT MISSING ID: ${id}`);
     failed = true;
   }

@@ -1,0 +1,53 @@
+---
+import Layout from "../../../components/Layout.astro";
+import { loadKb, publishableKb, graphData } from "../../../lib/kb.mjs";
+import { fieldHtml, tagRowHtml } from "../../../lib/kb-render.mjs";
+
+export async function getStaticPaths() {
+  const pub = publishableKb(loadKb());
+  const pubIds = new Set(pub.map((o) => o.id));
+  const graph = graphData(pub);
+  const adj = new Map(pub.map((_, i) => [i, []]));
+  graph.links.forEach(([a, b]) => { adj.get(a).push(b); adj.get(b).push(a); });
+  return pub.map((o, i) => ({
+    params: { schema: o.schema, slug: o.slug },
+    props: {
+      o,
+      connected: adj.get(i).map((j) => pub[j]).filter((c) => pubIds.has(c.id)).slice(0, 12),
+    },
+  }));
+}
+const { o, connected } = Astro.props;
+const skip = new Set(["title", "summary", "notes", "provenance", "related_concepts", "publish"]);
+const rest = Object.keys(o.raw).filter((k) => !skip.has(k));
+---
+<Layout title={o.title} current="commons" section="Bioregional Commons" description={o.summary?.slice(0, 150)}>
+  <article class="kb-object">
+    <p class="kb-crumb"><a href="/commons/">Commons</a> / {o.schema}</p>
+    <h1>{o.title}</h1>
+    <Fragment set:html={tagRowHtml(o)} />
+    <dl>
+      <Fragment set:html={fieldHtml("summary", o.raw.summary)} />
+      <Fragment set:html={fieldHtml("notes", o.raw.notes)} />
+      <Fragment set:html={fieldHtml("related concepts", o.raw.related_concepts)} />
+      <Fragment set:html={fieldHtml("provenance", o.raw.provenance, true)} />
+      {rest.map((k) => <Fragment set:html={fieldHtml(k, o.raw[k], typeof o.raw[k] === "object")} />)}
+    </dl>
+    {connected.length > 0 && (
+      <>
+        <h2>Connected entries</h2>
+        <ul class="kb-connected">
+          {connected.map((c) => <li><a href={`/commons/${c.schema}/${c.slug}/`}>{c.title}</a></li>)}
+        </ul>
+      </>
+    )}
+  </article>
+</Layout>
+
+<style>
+  .kb-object { max-width: 72ch; margin: 0 auto; padding: 32px 20px 64px; }
+  .kb-crumb { font-size: 0.8rem; color: var(--rule, #6b6660); }
+  .kb-object dl dt { color: var(--rule, #6b6660); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 16px; font-weight: 600; }
+  .kb-object dl dd { margin: 4px 0 0; white-space: pre-wrap; word-break: break-word; }
+  .kb-object dl dd.mono { font-family: ui-monospace, monospace; font-size: 0.8rem; background: var(--ivory, #f6f1e8); border: 1px solid var(--sand, #ece4d8); border-radius: 8px; padding: 8px 10px; }
+</style>

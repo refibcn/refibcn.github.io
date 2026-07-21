@@ -1,0 +1,487 @@
+---
+// Commons review surface — password-gated INTERNAL build (knowledge-commons Phase 3.0a).
+// Fully self-contained on purpose: every byte of KB-derived content stays in this one
+// HTML file so staticrypt encrypts all of it (no /_astro assets, no bundled data chunks).
+// Styling mirrors editorial-organic.css values inline for the same reason.
+import { loadKb, facets, graphData } from "../lib/kb.mjs";
+
+const objects = loadKb();
+const { schemas, domains, highRisk } = facets(objects);
+const graph = graphData(objects);
+const bySchema = Object.fromEntries(schemas.map((s) => [s, objects.filter((o) => o.schema === s).length]));
+const rawCount = objects.filter((o) => o.maturity === "raw").length;
+
+// Schema palette — dataviz-validated on paper #fbf9f3 (all 6 checks pass; fixed assignment).
+const COLORS = {
+  "claim-evidence": "#C92637",
+  "concept-lineage": "#7B3B6E",
+  "encyclopedia-entry": "#3A6B24",
+  "public-use-boundary": "#B08000",
+  "resource": "#426EAF",
+  "signal": "#C96A2B",
+  "source-system": "#0A9B8E",
+};
+const inlineJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>ReFi BCN — internal review</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style is:inline>
+      :root {
+        --paper: #fbf9f3; --ivory: #f6f1e8; --sand: #ece4d8;
+        --ink: #1d1a16; --mut: #6b6660; --rule: #d9d0c2;
+        --red: #C92637; --blue: #426EAF; --amber: #B08000;
+        --radius: 8px; --t: 120ms ease;
+        --font-display: "Fraunces", Georgia, serif;
+        --font-body: "Inter", system-ui, -apple-system, sans-serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body { background: var(--paper); color: var(--ink); font: 15px/1.55 var(--font-body); }
+
+      /* ── Header ─────────────────────────────────────── */
+      header { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: 1px solid var(--sand); padding: 14px 20px 12px; }
+      h1 { font: 700 1.25rem/1.2 var(--font-display); margin: 0; letter-spacing: -0.01em; }
+      .sub { color: var(--mut); font-size: 0.8rem; margin-top: 2px; }
+      .sub b { color: var(--ink); font-weight: 600; }
+      .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+      input[type="search"], select {
+        background: var(--ivory); border: 1px solid var(--sand); color: var(--ink);
+        padding: 7px 10px; border-radius: var(--radius); font: inherit; font-size: 0.85rem;
+      }
+      input[type="search"] { flex: 1 1 180px; min-width: 140px; }
+      input:focus-visible, select:focus-visible, .pill:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+      .pillbar { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; padding-bottom: 2px; }
+      .pillbar::-webkit-scrollbar { display: none; }
+      .pill {
+        cursor: pointer; user-select: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 11px; border: 1px solid var(--sand); border-radius: 999px; background: var(--ivory);
+        color: var(--mut); font-size: 0.75rem; font-weight: 500; transition: border-color var(--t), color var(--t);
+      }
+      .pill:hover { border-color: var(--mut); }
+      .pill.on { color: var(--ink); border-color: var(--ink); background: #fff; font-weight: 600; }
+      .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+      .viewtoggle { display: inline-flex; border: 1px solid var(--sand); border-radius: var(--radius); overflow: hidden; }
+      .viewtoggle button { border: 0; background: var(--ivory); color: var(--mut); font: inherit; font-size: 0.8rem; padding: 7px 12px; cursor: pointer; }
+      .viewtoggle button.on { background: var(--ink); color: var(--paper); }
+
+      /* ── List ───────────────────────────────────────── */
+      main { max-width: 880px; margin: 0 auto; padding: 14px 20px 60px; }
+      .count { color: var(--mut); font-size: 0.78rem; margin: 8px 2px; font-family: var(--font-mono); }
+      .card {
+        background: var(--ivory); border: 1px solid var(--sand); border-radius: var(--radius);
+        padding: 13px 15px; margin: 9px 0; cursor: pointer; transition: border-color var(--t), transform var(--t);
+      }
+      .card:hover { border-color: var(--mut); }
+      .card.hr { border-left: 3px solid var(--amber); }
+      .ct { font-weight: 600; font-size: 0.95rem; line-height: 1.35; }
+      .cs { color: var(--mut); font-size: 0.8rem; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+      .tag { font-size: 0.68rem; color: var(--mut); background: var(--paper); border: 1px solid var(--sand); padding: 1px 8px; border-radius: 5px; font-family: var(--font-mono); display: inline-flex; align-items: center; gap: 5px; }
+      .tag.warn { color: #7a5800; border-color: #e3cf96; background: #faf3df; }
+      .empty { text-align: center; color: var(--mut); padding: 60px 0; }
+
+      /* ── Graph ──────────────────────────────────────── */
+      #graphwrap { display: none; position: relative; }
+      #graphwrap.on { display: block; }
+      #gcanvas { display: block; width: 100%; cursor: grab; }
+      #tip {
+        position: fixed; display: none; z-index: 30; pointer-events: none; max-width: 300px;
+        background: #fff; border: 1px solid var(--sand); border-radius: var(--radius);
+        box-shadow: 0 4px 18px rgba(29, 26, 22, 0.12); padding: 8px 11px; font-size: 0.8rem;
+      }
+      #tip .t { font-weight: 600; }
+      #tip .m { color: var(--mut); font-size: 0.72rem; margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+      .gleg { position: absolute; left: 12px; bottom: 12px; background: rgba(251, 249, 243, 0.92); border: 1px solid var(--sand); border-radius: var(--radius); padding: 8px 11px; font-size: 0.7rem; color: var(--mut); }
+
+      /* ── Detail drawer ──────────────────────────────── */
+      #overlay { position: fixed; inset: 0; background: rgba(29, 26, 22, 0.35); display: none; z-index: 20; }
+      #overlay.open { display: block; }
+      #detail {
+        position: fixed; top: 0; right: 0; bottom: 0; width: min(680px, 100vw);
+        background: var(--paper); border-left: 1px solid var(--sand); overflow-y: auto;
+        padding: 20px 26px 40px; overscroll-behavior: contain;
+      }
+      #detail h2 { font: 700 1.35rem/1.25 var(--font-display); margin: 6px 0 4px; letter-spacing: -0.01em; }
+      .slugline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--mut); font-size: 0.75rem; font-family: var(--font-mono); margin-bottom: 8px; }
+      .slugline code { background: var(--ivory); border: 1px solid var(--sand); padding: 2px 7px; border-radius: 5px; }
+      .slugline button { border: 1px solid var(--sand); background: var(--ivory); color: var(--mut); border-radius: 5px; font: inherit; font-size: 0.7rem; padding: 2px 8px; cursor: pointer; }
+      .slugline button:hover { color: var(--ink); border-color: var(--mut); }
+      #detail a { color: var(--blue); }
+      .close { position: sticky; top: 0; float: right; cursor: pointer; color: var(--mut); font-size: 1.4rem; line-height: 1; background: var(--paper); border: 0; padding: 4px 10px; border-radius: var(--radius); }
+      .close:hover { color: var(--ink); }
+      dl { margin: 16px 0 0; }
+      dt { color: var(--mut); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 14px; font-weight: 600; }
+      dd { margin: 3px 0 0; white-space: pre-wrap; word-break: break-word; font-size: 0.88rem; }
+      dd.mono { font-family: var(--font-mono); font-size: 0.78rem; background: var(--ivory); border: 1px solid var(--sand); border-radius: var(--radius); padding: 8px 10px; }
+      .connected { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+      .connected button {
+        text-align: left; border: 1px solid var(--sand); background: var(--ivory); border-radius: var(--radius);
+        padding: 7px 11px; font: inherit; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      }
+      .connected button:hover { border-color: var(--mut); }
+      .kbd { border: 1px solid var(--sand); border-bottom-width: 2px; border-radius: 4px; background: var(--ivory); padding: 0 5px; font-family: var(--font-mono); font-size: 0.68rem; }
+
+      @media (max-width: 720px) {
+        header { padding: 12px 14px 10px; }
+        main { padding: 10px 14px 60px; }
+        #detail { width: 100vw; border-left: 0; padding: 16px 16px 40px; }
+        .gleg { display: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Knowledge Commons — internal review</h1>
+      <div class="sub">
+        <b>{objects.length}</b> typed objects from the old-KB reprocessing (Batch 1) · <b>{rawCount}</b> raw in the review queue ·
+        <b>{highRisk}</b> high-risk · password-gated review build, <em>not</em> the public commons ·
+        <span class="kbd">/</span> search · <span class="kbd">g</span> graph · <span class="kbd">esc</span> close
+      </div>
+      <div class="controls">
+        <input id="q" type="search" placeholder="Search title, summary, slug…" autocomplete="off" />
+        <select id="dom" aria-label="Filter by domain">
+          <option value="">all domains</option>
+          {domains.map((d) => <option>{d}</option>)}
+        </select>
+        <select id="sort" aria-label="Sort">
+          <option value="title">sort: title</option>
+          <option value="schema">sort: schema</option>
+          <option value="domain">sort: domain</option>
+          <option value="risk">sort: high-risk first</option>
+        </select>
+        <span class="viewtoggle" role="tablist">
+          <button id="v-list" class="on" role="tab">List</button>
+          <button id="v-graph" role="tab">Graph</button>
+        </span>
+      </div>
+      <div class="controls">
+        <div class="pillbar" role="group" aria-label="Filter by schema">
+          <span class="pill on" data-f="all" tabindex="0">all {objects.length}</span>
+          {schemas.map((s) => (
+            <span class="pill" data-f={s} tabindex="0">
+              <span class="dot" style={`background:${COLORS[s]}`}></span>{s} {bySchema[s]}
+            </span>
+          ))}
+          <span class="pill" data-f="__hr" tabindex="0">⚠ high-risk {highRisk}</span>
+        </div>
+      </div>
+    </header>
+
+    <main id="listwrap">
+      <div class="count" id="count"></div>
+      <div id="list"></div>
+    </main>
+
+    <div id="graphwrap">
+      <canvas id="gcanvas"></canvas>
+      <div class="gleg">node = object · color = schema (legend above) · size = connections · ⚠ amber ring = high-risk · edges = same source / shared concepts · drag to pan, scroll to zoom</div>
+    </div>
+
+    <div id="tip"></div>
+    <div id="overlay"><aside id="detail" role="dialog" aria-modal="true"></aside></div>
+
+    <script is:inline set:html={`window.KB=${inlineJson(objects)};window.GRAPH=${inlineJson(graph)};window.COLORS=${inlineJson(COLORS)};`}></script>
+    <script is:inline>
+      (function () {
+        "use strict";
+        var KB = window.KB, GRAPH = window.GRAPH, COLORS = window.COLORS;
+        var view = "list", F = "all", HR = false, Q = "", D = "", S = "title";
+        var $ = function (id) { return document.getElementById(id); };
+        var listEl = $("list"), countEl = $("count"), tip = $("tip"), overlay = $("overlay"), detail = $("detail");
+        var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+
+        // adjacency (built once, from full-graph indices)
+        var adj = KB.map(function () { return []; });
+        GRAPH.links.forEach(function (l) { adj[l[0]].push(l[1]); adj[l[1]].push(l[0]); });
+
+        function filtered() {
+          var q = Q.toLowerCase(), out = [];
+          for (var i = 0; i < KB.length; i++) {
+            var o = KB[i];
+            if (F !== "all" && o.schema !== F) continue;
+            if (HR && !o.high_risk) continue;
+            if (D && o.domain !== D) continue;
+            if (q && (o.title + " " + o.summary + " " + o.slug).toLowerCase().indexOf(q) === -1) continue;
+            out.push(i);
+          }
+          var cmp = {
+            title: function (a, b) { return KB[a].title.localeCompare(KB[b].title); },
+            schema: function (a, b) { return KB[a].schema.localeCompare(KB[b].schema) || KB[a].title.localeCompare(KB[b].title); },
+            domain: function (a, b) { return (KB[a].domain || "￿").localeCompare(KB[b].domain || "￿") || KB[a].title.localeCompare(KB[b].title); },
+            risk: function (a, b) { return (KB[b].high_risk - KB[a].high_risk) || KB[a].title.localeCompare(KB[b].title); },
+          }[S];
+          out.sort(cmp);
+          return out;
+        }
+
+        function tagRow(o) {
+          return '<div class="tags">' +
+            '<span class="tag"><span class="dot" style="background:' + COLORS[o.schema] + '"></span>' + o.schema + "</span>" +
+            (o.subtype && o.subtype !== o.schema ? '<span class="tag">' + esc(o.subtype) + "</span>" : "") +
+            (o.domain ? '<span class="tag">' + esc(o.domain) + "</span>" : "") +
+            '<span class="tag">' + esc(o.maturity) + "</span>" +
+            (o.high_risk ? '<span class="tag warn">⚠ high-risk</span>' : "") + "</div>";
+        }
+
+        function renderList(vis) {
+          if (!vis.length) { listEl.innerHTML = '<div class="empty">No objects match. Clear a filter or the search.</div>'; return; }
+          listEl.innerHTML = vis.map(function (i) {
+            var o = KB[i];
+            return '<article class="card' + (o.high_risk ? " hr" : "") + '" data-i="' + i + '"><div class="ct">' + esc(o.title) + "</div>" +
+              (o.summary ? '<div class="cs">' + esc(o.summary) + "</div>" : "") + tagRow(o) + "</article>";
+          }).join("");
+        }
+
+        /* ── Graph engine (hand-rolled; self-containment > d3) ── */
+        var canvas = $("gcanvas"), ctx = canvas.getContext("2d");
+        var sim = null, raf = 0, T = { x: 0, y: 0, k: 1 }, hoverN = -1, fitted = false;
+
+        function buildSim(vis) {
+          var setV = {}; vis.forEach(function (i, s) { setV[i] = s; });
+          var n = vis.length, R = Math.sqrt(n) * 26 + 40;
+          var nodes = vis.map(function (i, s) {
+            var a = (s / n) * Math.PI * 2, rr = R * (0.35 + 0.65 * Math.sqrt((s % 97) / 97));
+            var g = GRAPH.nodes[i];
+            return { i: i, x: Math.cos(a) * rr, y: Math.sin(a) * rr, vx: 0, vy: 0,
+              r: 3 + 2 * Math.sqrt(g.degree), c: COLORS[g.schema], hr: g.hr };
+          });
+          var links = [];
+          GRAPH.links.forEach(function (l) {
+            if (setV[l[0]] !== undefined && setV[l[1]] !== undefined) links.push([setV[l[0]], setV[l[1]]]);
+          });
+          sim = { nodes: nodes, links: links, alpha: 1 };
+          fitted = false;
+        }
+
+        function tick() {
+          var N = sim.nodes, L = sim.links, i, j, a, b, dx, dy, d2, d, f;
+          for (i = 0; i < N.length; i++) for (j = i + 1; j < N.length; j++) {
+            a = N[i]; b = N[j]; dx = b.x - a.x; dy = b.y - a.y;
+            d2 = dx * dx + dy * dy; if (d2 < 1) d2 = 1; if (d2 > 48400) continue;
+            f = 320 / d2; d = Math.sqrt(d2);
+            dx /= d; dy /= d;
+            a.vx -= dx * f; a.vy -= dy * f; b.vx += dx * f; b.vy += dy * f;
+          }
+          for (i = 0; i < L.length; i++) {
+            a = N[L[i][0]]; b = N[L[i][1]];
+            dx = b.x - a.x; dy = b.y - a.y; d = Math.sqrt(dx * dx + dy * dy) || 1;
+            f = (d - 40) * 0.06 / d;
+            a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
+          }
+          for (i = 0; i < N.length; i++) {
+            a = N[i];
+            a.vx -= a.x * 0.005; a.vy -= a.y * 0.005;
+            a.vx *= 0.82; a.vy *= 0.82;
+            a.x += Math.max(-14, Math.min(14, a.vx)) * sim.alpha;
+            a.y += Math.max(-14, Math.min(14, a.vy)) * sim.alpha;
+          }
+          sim.alpha *= 0.995;
+        }
+
+        function fit() {
+          var N = sim.nodes; if (!N.length) return;
+          var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+          N.forEach(function (n) { x0 = Math.min(x0, n.x); x1 = Math.max(x1, n.x); y0 = Math.min(y0, n.y); y1 = Math.max(y1, n.y); });
+          var w = canvas.clientWidth, h = canvas.clientHeight;
+          var k = Math.min(2, 0.9 * Math.min(w / Math.max(1, x1 - x0), h / Math.max(1, y1 - y0)));
+          T.k = k; T.x = w / 2 - k * (x0 + x1) / 2; T.y = h / 2 - k * (y0 + y1) / 2;
+        }
+
+        function draw() {
+          var dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+          if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; }
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, w, h);
+          ctx.translate(T.x, T.y); ctx.scale(T.k, T.k);
+          var N = sim.nodes, L = sim.links, i;
+          ctx.strokeStyle = "rgba(107,102,96,0.28)"; ctx.lineWidth = 1 / T.k;
+          ctx.beginPath();
+          for (i = 0; i < L.length; i++) {
+            var a = N[L[i][0]], b = N[L[i][1]];
+            ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+          }
+          ctx.stroke();
+          for (i = 0; i < N.length; i++) {
+            var n = N[i];
+            if (n.hr) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 3 / T.k, 0, 6.2832); ctx.strokeStyle = "#B08000"; ctx.lineWidth = 1.8 / T.k; ctx.stroke(); }
+            ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, 6.2832);
+            ctx.fillStyle = n.c; ctx.fill();
+            ctx.strokeStyle = "#fbf9f3"; ctx.lineWidth = Math.min(2, 2 / T.k); ctx.stroke();
+            if (i === hoverN) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 1.5 / T.k, 0, 6.2832); ctx.strokeStyle = "#1d1a16"; ctx.lineWidth = 1.5 / T.k; ctx.stroke(); }
+          }
+        }
+
+        function loop() {
+          if (sim.alpha > 0.015) { tick(); tick(); }
+          else if (!fitted) { fit(); fitted = true; }
+          draw();
+          raf = requestAnimationFrame(loop);
+        }
+
+        function sizeCanvas() {
+          var top = document.querySelector("header").offsetHeight;
+          canvas.style.height = "calc(100dvh - " + (top + 2) + "px)";
+        }
+
+        // pointer interactions
+        var drag = null, moved = 0;
+        canvas.addEventListener("pointerdown", function (e) { drag = { x: e.clientX, y: e.clientY, tx: T.x, ty: T.y }; moved = 0; canvas.style.cursor = "grabbing"; canvas.setPointerCapture(e.pointerId); });
+        canvas.addEventListener("pointerup", function (e) {
+          canvas.style.cursor = "grab"; canvas.releasePointerCapture(e.pointerId);
+          if (drag && moved < 4 && hoverN >= 0) openDetail(sim.nodes[hoverN].i);
+          drag = null;
+        });
+        canvas.addEventListener("pointermove", function (e) {
+          if (drag) {
+            moved += Math.abs(e.movementX) + Math.abs(e.movementY);
+            T.x = drag.tx + (e.clientX - drag.x); T.y = drag.ty + (e.clientY - drag.y);
+            return;
+          }
+          var rect = canvas.getBoundingClientRect();
+          var wx = (e.clientX - rect.left - T.x) / T.k, wy = (e.clientY - rect.top - T.y) / T.k;
+          var best = -1, bd = 1e9, N = sim ? sim.nodes : [];
+          for (var i = 0; i < N.length; i++) {
+            var dx = N[i].x - wx, dy = N[i].y - wy, dd = dx * dx + dy * dy;
+            var rr = N[i].r + 5 / T.k;
+            if (dd < rr * rr && dd < bd) { bd = dd; best = i; }
+          }
+          hoverN = best;
+          if (best >= 0) {
+            var o = KB[N[best].i];
+            tip.innerHTML = '<div class="t">' + esc(o.title) + '</div><div class="m"><span class="dot" style="background:' + COLORS[o.schema] + '"></span>' + o.schema + (o.high_risk ? " · ⚠ high-risk" : "") + "</div>";
+            tip.style.display = "block";
+            tip.style.left = Math.min(window.innerWidth - 310, e.clientX + 14) + "px";
+            tip.style.top = (e.clientY + 14) + "px";
+            canvas.style.cursor = "pointer";
+          } else { tip.style.display = "none"; canvas.style.cursor = "grab"; }
+        });
+        canvas.addEventListener("pointerleave", function () { tip.style.display = "none"; hoverN = -1; });
+        canvas.addEventListener("wheel", function (e) {
+          e.preventDefault();
+          var rect = canvas.getBoundingClientRect();
+          var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+          var k2 = Math.max(0.35, Math.min(4, T.k * Math.exp(-e.deltaY * 0.0012)));
+          T.x = mx - (mx - T.x) * (k2 / T.k); T.y = my - (my - T.y) * (k2 / T.k); T.k = k2;
+        }, { passive: false });
+
+        /* ── Detail drawer ── */
+        var current = -1;
+        function field(k, v, mono) {
+          if (v == null || v === "" || (Array.isArray(v) && !v.length)) return "";
+          var body = Array.isArray(v)
+            ? v.map(function (x) { return typeof x === "object" ? JSON.stringify(x, null, 2) : String(x); }).join("\n")
+            : typeof v === "object" ? JSON.stringify(v, null, 2) : String(v);
+          return "<dt>" + esc(k) + '</dt><dd class="' + (mono ? "mono" : "") + '">' + esc(body) + "</dd>";
+        }
+        function openDetail(i) {
+          current = i;
+          var o = KB[i], r = o.raw;
+          var skip = { title: 1, summary: 1, notes: 1, provenance: 1, related_concepts: 1 };
+          var rest = Object.keys(r).filter(function (k) { return !skip[k]; });
+          var conn = adj[i].slice(0, 12).map(function (j) {
+            var c = KB[j];
+            return '<button data-j="' + j + '"><span class="dot" style="background:' + COLORS[c.schema] + '"></span>' + esc(c.title) + (c.high_risk ? " ⚠" : "") + "</button>";
+          }).join("");
+          detail.innerHTML =
+            '<button class="close" aria-label="Close">×</button>' +
+            "<h2>" + esc(o.title) + "</h2>" +
+            '<div class="slugline"><code>' + esc(o.id) + "</code>" +
+            '<button id="copylink">copy link</button>' +
+            (o.origin ? '<a href="' + esc(o.origin) + '" target="_blank" rel="noreferrer">source ↗</a>' : "") + "</div>" +
+            tagRow(o) +
+            "<dl>" + field("summary", r.summary) + field("notes", r.notes) +
+            field("related_concepts", r.related_concepts) + field("provenance", r.provenance, true) +
+            rest.map(function (k) { return field(k, r[k], typeof r[k] === "object"); }).join("") + "</dl>" +
+            (conn ? "<dt style='color:var(--mut);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.07em;margin-top:18px;font-weight:600'>Connected objects (" + adj[i].length + ")</dt><div class='connected'>" + conn + "</div>" : "");
+          detail.querySelector(".close").onclick = closeDetail;
+          $("copylink").onclick = function () {
+            navigator.clipboard.writeText(location.origin + location.pathname + "#" + o.id);
+            this.textContent = "copied ✓"; var b = this; setTimeout(function () { b.textContent = "copy link"; }, 1200);
+          };
+          detail.querySelectorAll(".connected button").forEach(function (b) {
+            b.onclick = function () { openDetail(+b.dataset.j); };
+          });
+          overlay.classList.add("open");
+          detail.scrollTop = 0;
+          history.replaceState(null, "", "#" + o.id);
+        }
+        function closeDetail() { current = -1; overlay.classList.remove("open"); history.replaceState(null, "", location.pathname); }
+        overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDetail(); });
+        listEl.addEventListener("click", function (e) {
+          var card = e.target.closest(".card"); if (card) openDetail(+card.dataset.i);
+        });
+
+        /* ── Render dispatch ── */
+        function render() {
+          var vis = filtered();
+          if (view === "list") {
+            $("listwrap").style.display = "";
+            $("graphwrap").classList.remove("on");
+            cancelAnimationFrame(raf); raf = 0;
+            countEl.textContent = vis.length + " / " + KB.length + " objects";
+            renderList(vis);
+          } else {
+            $("listwrap").style.display = "none";
+            $("graphwrap").classList.add("on");
+            sizeCanvas();
+            buildSim(vis);
+            countEl.textContent = "";
+            if (!raf) loop();
+          }
+        }
+
+        function setView(v) {
+          view = v;
+          $("v-list").classList.toggle("on", v === "list");
+          $("v-graph").classList.toggle("on", v === "graph");
+          render();
+        }
+        $("v-list").onclick = function () { setView("list"); };
+        $("v-graph").onclick = function () { setView("graph"); };
+
+        document.querySelectorAll(".pill").forEach(function (p) {
+          var act = function () {
+            var f = p.dataset.f;
+            if (f === "__hr") { HR = !HR; p.classList.toggle("on"); }
+            else { F = f; document.querySelectorAll(".pill").forEach(function (x) { if (x.dataset.f !== "__hr") x.classList.toggle("on", x === p); }); }
+            render();
+          };
+          p.onclick = act;
+          p.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } };
+        });
+        $("q").oninput = function (e) { Q = e.target.value; render(); };
+        $("dom").onchange = function (e) { D = e.target.value; render(); };
+        $("sort").onchange = function (e) { S = e.target.value; render(); };
+        window.addEventListener("resize", function () { if (view === "graph") sizeCanvas(); });
+
+        document.addEventListener("keydown", function (e) {
+          var typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+          if (e.key === "Escape") { closeDetail(); return; }
+          if (typing) return;
+          if (e.key === "/") { e.preventDefault(); $("q").focus(); }
+          if (e.key === "g") setView(view === "list" ? "graph" : "list");
+        });
+
+        render();
+        if (location.hash.length > 1) {
+          var id = decodeURIComponent(location.hash.slice(1));
+          for (var i = 0; i < KB.length; i++) if (KB[i].id === id) { openDetail(i); break; }
+        }
+      })();
+    </script>
+  </body>
+</html>

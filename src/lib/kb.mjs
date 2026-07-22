@@ -126,3 +126,59 @@ export function publishableKb(objects) {
     return true;
   });
 }
+
+// ── Connections (link graph for the KB app) ──────────────────────────────
+// Resolves each object's `related_concepts` (a list of TITLES) to indices
+// WITHIN the given set, plus reverse backlinks and same-source siblings.
+// Resolution is scoped to `objects`, so in the public lens (fed publishableKb)
+// a link to an unpublished title stays `unresolved` — never becomes a path.
+const normTitle = (s) => String(s).trim().toLowerCase().replace(/\s+/g, " ");
+
+export function connections(objects) {
+  const byTitle = new Map();
+  const bySlug = new Map();
+  objects.forEach((o, i) => {
+    const t = normTitle(o.title);
+    if (!byTitle.has(t)) byTitle.set(t, i); // first wins on dup titles
+    if (!bySlug.has(o.slug)) bySlug.set(o.slug, i);
+  });
+
+  const out = objects.map(() => []);
+  const unresolved = objects.map(() => []);
+  const backlinks = objects.map(() => []);
+
+  objects.forEach((o, i) => {
+    const seen = new Set();
+    for (const raw of o.raw.related_concepts ?? []) {
+      const label = String(raw).trim();
+      if (!label) continue;
+      let j = byTitle.get(normTitle(label));
+      if (j === undefined) j = bySlug.get(label);
+      if (j === undefined || j === i) {
+        if (j === undefined) unresolved[i].push(label);
+        continue;
+      }
+      if (seen.has(j)) continue;
+      seen.add(j);
+      out[i].push(j);
+      backlinks[j].push(i);
+    }
+  });
+
+  // Same work-order / same-origin provenance siblings (excludes self + concept links).
+  const bySource = new Map();
+  objects.forEach((o, i) => {
+    const src = o.raw.work_order || o.origin;
+    if (!src) return;
+    if (!bySource.has(src)) bySource.set(src, []);
+    bySource.get(src).push(i);
+  });
+  const siblings = objects.map((o, i) => {
+    const src = o.raw.work_order || o.origin;
+    const group = (src && bySource.get(src)) || [];
+    const linked = new Set(out[i]);
+    return group.filter((j) => j !== i && !linked.has(j));
+  });
+
+  return { out, unresolved, backlinks, siblings };
+}

@@ -42,3 +42,41 @@ export function fieldHtml(label, v, mono = false) {
     : typeof v === "object" ? JSON.stringify(v, null, 2) : String(v);
   return `<dt>${escHtml(label)}</dt><dd class="${mono ? "mono" : ""}">${escHtml(body)}</dd>`;
 }
+
+// Per-schema field order for the reader (public page + internal app share it).
+export const FIELD_ORDER = {
+  "claim-evidence": ["claim", "evidence", "interpretation", "uncertainty"],
+  "concept-lineage": ["short_description", "source_traditions", "tensions", "risks_of_flattening", "toolkit_usage"],
+  "signal": ["interpretation", "proposed_intervention", "signal_type"],
+  "encyclopedia-entry": ["summary", "known_tensions", "audience", "page_type"],
+  "resource": ["summary", "notes", "resource_type", "link_status"],
+  "source-system": ["what_it_curates", "url", "update_rhythm"],
+  "public-use-boundary": ["consent_note", "tier", "review_type"],
+};
+const LABELS = {
+  short_description: "description", proposed_intervention: "proposed intervention",
+  known_tensions: "known tensions", risks_of_flattening: "risks of flattening",
+  source_traditions: "source traditions", toolkit_usage: "toolkit usage",
+  resource_type: "type", signal_type: "type", page_type: "type",
+  link_status: "link status", update_rhythm: "update rhythm", review_type: "review type",
+  what_it_curates: "what it curates", work_order: "work order",
+};
+export const fieldLabel = (k) => LABELS[k] || k.replace(/_/g, " ");
+
+// Full typed body for one object: ordered primary fields → provenance → the rest.
+// `related_concepts` is omitted (rendered separately as connections).
+export function typedFieldsHtml(o) {
+  const r = o.raw;
+  const order = FIELD_ORDER[o.schema] || ["summary"];
+  const shown = new Set(["title", "provenance", "related_concepts", "type", "publish"]);
+  let html = "";
+  for (const k of order) {
+    if (r[k] != null && r[k] !== "") { html += fieldHtml(fieldLabel(k), r[k], false); shown.add(k); }
+  }
+  if (r.provenance) html += fieldHtml("provenance", r.provenance, true);
+  for (const k of Object.keys(r)) {
+    if (shown.has(k)) continue;
+    html += fieldHtml(fieldLabel(k), r[k], typeof r[k] === "object");
+  }
+  return html;
+}

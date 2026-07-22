@@ -2,9 +2,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { loadKb, facets, graphData } from "../src/lib/kb.mjs";
+import { loadKb, facets, graphData, connections } from "../src/lib/kb.mjs";
 import { publishableKb } from "../src/lib/kb.mjs";
-import { COLORS, escHtml, tagRowHtml } from "../src/lib/kb-render.mjs";
+import { COLORS, escHtml, tagRowHtml, typedFieldsHtml } from "../src/lib/kb-render.mjs";
 
 // fileURLToPath, not .pathname — the checkout path contains spaces ("03 Libraries").
 const FIX = fileURLToPath(new URL("./fixtures/kb/", import.meta.url));
@@ -91,6 +91,81 @@ test("publishableKb: high-risk requires explicit public boundary", () => {
 
 test("publishableKb: real store yields ZERO public objects today", { skip: !existsSync("../../data/kb/index.json") }, () => {
   assert.equal(publishableKb(loadKb("../../data/kb/")).length, 0);
+});
+
+// connections() operates on normalized objects (loadKb output shape).
+const n = (title, slug, raw = {}) => ({ title, slug, schema: "resource", raw });
+
+test("connections: resolves related_concepts by title (case-insensitive) + backlinks", () => {
+  const objs = [
+    n("Quadratic Funding", "qf"),
+    n("Round", "round", { related_concepts: ["Quadratic Funding", "Nonexistent Concept"], work_order: "wo-1" }),
+    n("Other", "other", { related_concepts: ["quadratic  funding"], work_order: "wo-1" }),
+  ];
+  const c = connections(objs);
+  assert.deepEqual(c.out[1], [0], "Round → Quadratic Funding");
+  assert.deepEqual(c.out[2], [0], "case/space-insensitive match");
+  assert.deepEqual(c.unresolved[1], ["Nonexistent Concept"], "missing title stays unresolved");
+  assert.deepEqual([...c.backlinks[0]].sort(), [1, 2], "QF is referenced by both");
+  assert.deepEqual(c.siblings[1], [2], "same work_order sibling, not a concept link");
+  assert.deepEqual(c.siblings[0], [], "no work_order/origin → no siblings");
+});
+
+test("connections: self-reference never links or reports unresolved", () => {
+  const c = connections([n("Loop", "loop", { related_concepts: ["Loop"] })]);
+  assert.deepEqual(c.out[0], []);
+  assert.deepEqual(c.unresolved[0], []);
+  assert.deepEqual(c.backlinks[0], []);
+});
+
+test("connections: dup titles resolve to the first; sibling excludes concept-linked", () => {
+  const objs = [
+    n("Dup", "dup-a"),
+    n("Dup", "dup-b"),
+    n("Ref", "ref", { related_concepts: ["Dup"] }),
+  ];
+  const c = connections(objs);
+  assert.deepEqual(c.out[2], [0], "first Dup wins");
+  assert.deepEqual(c.backlinks[0], [2]);
+  assert.deepEqual(c.backlinks[1], []);
+});
+
+test("connections: on the real store, every out-link index is valid", { skip: !existsSync("../../data/kb/index.json") }, () => {
+  const o = loadKb("../../data/kb/");
+  const c = connections(o);
+  assert.equal(c.out.length, o.length);
+  const someResolved = c.out.reduce((a, l) => a + l.length, 0);
+  assert.ok(someResolved > 0, "expected some related_concepts to resolve");
+  for (const list of c.out) for (const j of list) assert.ok(j >= 0 && j < o.length, "valid index");
+});
+
+test("public lens: connections over publishableKb never link to non-public objects", () => {
+  // Two publishable objects linking to each other + to a non-public title.
+  const A = mk({ id: "resource/a", slug: "a", title: "Alpha",
+    raw: { publish: true, ai_assisted: false, related_concepts: ["Beta", "Secret Draft"] } });
+  const B = mk({ id: "resource/b", slug: "b", title: "Beta",
+    raw: { publish: true, ai_assisted: false, related_concepts: ["Alpha"] } });
+  const secret = mk({ id: "resource/secret", slug: "secret", title: "Secret Draft",
+    maturity: "raw", raw: { publish: false } });
+  const pub = publishableKb([A, B, secret]);
+  assert.equal(pub.length, 2, "only A + B publish");
+  const c = connections(pub);
+  const ai = pub.findIndex((o) => o.slug === "a");
+  assert.equal(c.out[ai].length, 1, "Alpha links only to the public Beta");
+  assert.equal(pub[c.out[ai][0]].slug, "b");
+  assert.deepEqual(c.unresolved[ai], ["Secret Draft"], "the non-public title stays unresolved text, never a path");
+});
+
+test("kb-render: typedFieldsHtml orders by schema + omits related_concepts", () => {
+  const o = mk({ schema: "claim-evidence", raw: {
+    interpretation: "I", claim: "C", evidence: "E", uncertainty: "U",
+    related_concepts: ["X"], provenance: { origin: "o" },
+  }});
+  const html = typedFieldsHtml(o);
+  assert.ok(html.indexOf("claim") < html.indexOf("evidence"), "claim before evidence (schema order)");
+  assert.ok(html.indexOf("evidence") < html.indexOf("interpretation"), "evidence before interpretation");
+  assert.ok(html.includes("provenance"), "provenance rendered");
+  assert.ok(!html.includes(">related concepts<") && !html.includes("related_concepts"), "related_concepts omitted (shown as connections)");
 });
 
 test("kb-render: colors cover all 7 schemas; tagRow escapes", () => {

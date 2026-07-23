@@ -25,6 +25,12 @@ const pubBySchema = schemas
       commons, not a content dump.
     </p>
 
+    <a class="kb-atlas" href="/atlas/">
+      <span class="kb-atlas__eyebrow">Atlas · maps</span>
+      <strong>Catalunya's regenerative territory, mapped →</strong>
+      <p>The Regenerant Catalunya cohort across its comarques — the spatial lens on the same commons.</p>
+    </a>
+
     <h3>What's inside</h3>
     <div class="kb-types">
       {schemas.map((s) => (
@@ -92,4 +98,9 @@ const pubBySchema = schemas
   .kb-card p { color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 0; }
   .kb-empty { color: var(--text-muted); background: var(--surface-1); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: var(--space-5); }
   .kb-note { color: var(--text-muted); font-size: 0.85rem; margin-top: 24px; }
+  .kb-atlas { display: block; border: 1px solid var(--ink); background: var(--surface-1); padding: var(--space-5) var(--space-6); margin: 20px 0 28px; text-decoration: none; color: var(--text-primary); transition: translate var(--t-med), box-shadow var(--t-med); }
+  .kb-atlas:hover { translate: 0 -2px; box-shadow: 4px 4px 0 color-mix(in srgb, var(--ink) 12%, transparent); }
+  .kb-atlas__eyebrow { font-family: var(--mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+  .kb-atlas strong { display: block; font-family: var(--serif); font-size: var(--text-lg); margin: var(--space-1) 0; }
+  .kb-atlas p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
 </style>

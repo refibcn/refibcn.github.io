@@ -12,13 +12,14 @@ interface Props {
   dataset?: string;
 }
 const { current = "home", section, dataset } = Astro.props;
+// Topbar IA (260723): About · Projects · Services · Knowledge · Contact.
+// "Services" = /what-we-do, "Knowledge" = /commons (Atlas folded in there).
+// who-we-serve stays reachable (linked from Services), just off the topbar.
 const items = [
-  { id: "what-we-do", label: "What we do", href: "/what-we-do/" },
-  { id: "who-we-serve", label: "Who we serve", href: "/who-we-serve/" },
-  { id: "projects", label: "Projects", href: "/projects/" },
-  { id: "atlas", label: "Atlas", href: "/atlas/" },
-  { id: "commons", label: "Commons", href: "/commons/" },
   { id: "about", label: "About", href: "/about/" },
+  { id: "projects", label: "Projects", href: "/projects/" },
+  { id: "what-we-do", label: "Services", href: "/what-we-do/" },
+  { id: "commons", label: "Knowledge", href: "/commons/" },
 ];
 ---
 <header class="site-nav">

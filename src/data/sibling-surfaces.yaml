@@ -1,7 +1,5 @@
 siblings:
-  - label: Atlas (maps)
-    url: /atlas/
-  - label: Commons (knowledge)
+  - label: Knowledge (commons + atlas)
     url: /commons/
   - label: Bioregional Garden
     url: https://bioregioning.earth

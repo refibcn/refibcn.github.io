@@ -35,7 +35,13 @@ const {
   current = "home", section, dataset, minimal = false, noindex = false,
 } = Astro.props;
 const pageTitle = `${title} · ${site.name}`;
-const canonical = new URL(Astro.url.pathname, site.url).href;
+// i18n: CA/ES currently serve EN via rewrite fallback (untranslated). Point
+// canonical at the EN page and noindex the locale duplicates until real
+// translations land, so search engines index one copy.
+const loc = Astro.currentLocale ?? "en";
+const logicalPath = Astro.url.pathname.replace(/^\/(ca|es)(?=\/|$)/, "") || "/";
+const canonical = new URL(loc === "en" ? Astro.url.pathname : logicalPath, site.url).href;
+const localeFallbackNoindex = loc !== "en";
 ---
 <!doctype html>
 <html lang="en">
@@ -43,7 +49,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content={description} />
-  {noindex && <meta name="robots" content="noindex" />}
+  {(noindex || localeFallbackNoindex) && <meta name="robots" content="noindex" />}
   <title>{pageTitle}</title>
   <link rel="icon" type="image/png" href="/assets/favicons.png" />
   <link rel="canonical" href={canonical} />

@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
+import LangSwitch from "./LangSwitch.astro";
 const site = yaml.load(
   fs.readFileSync(path.join(process.cwd(), "src/data/site.yaml"), "utf8")
 ) as { name: string };
@@ -12,6 +13,10 @@ interface Props {
   dataset?: string;
 }
 const { current = "home", section, dataset } = Astro.props;
+// Keep the chosen locale as you navigate: prefix internal links with it
+// (EN stays unprefixed). CA/ES serve EN content via i18n rewrite fallback.
+const loc = Astro.currentLocale ?? "en";
+const L = (href: string) => (loc === "en" ? href : `/${loc}${href}`);
 // Topbar IA (260723): About · Projects · Services · Knowledge · Contact.
 // "Services" = /what-we-do, "Knowledge" = /commons (Atlas folded in there).
 // who-we-serve stays reachable (linked from Services), just off the topbar.
@@ -23,7 +28,7 @@ const items = [
 ];
 ---
 <header class="site-nav">
-  <a href="/" class="brand" aria-label={`${site.name} — home`}>
+  <a href={L("/")} class="brand" aria-label={`${site.name} — home`}>
     <span class="brand-org">{site.name}</span>
     {section && <><span class="brand-sep">·</span><span class="brand-system">{section}</span></>}
     {dataset && <><span class="brand-sep">·</span><span class="brand-dataset">{dataset}</span></>}
@@ -31,9 +36,10 @@ const items = [
   <nav aria-label="Primary">
     <ul>
       {items.map((it) => (
-        <li><a href={it.href} class:list={[{ active: current === it.id }]}>{it.label}</a></li>
+        <li><a href={L(it.href)} class:list={[{ active: current === it.id }]}>{it.label}</a></li>
       ))}
-      <li><a href="/contact/" class:list={["nav-cta", { active: current === "contact" }]}>Contact</a></li>
+      <li><a href={L("/contact/")} class:list={["nav-cta", { active: current === "contact" }]}>Contact</a></li>
+      <li><LangSwitch /></li>
     </ul>
   </nav>
 </header>
